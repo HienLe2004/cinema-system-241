@@ -23,7 +23,7 @@ app.use('/api/v1', require("./routes/cong_nghe_chieu.Routes"))
 //________________CHECK_DB_AND_RUN_SERVER_________________
 const PORT = process.env.PORT || 8080
 
-db.query('SELECT 1').then(() => {
+db.query('SELECT * FROM cong_nghe_chieu').then(() => {
     console.log('MySQL DB is connected.');
     app.listen(PORT, () => {
         console.log(`Server is running on port ${PORT}....`)
