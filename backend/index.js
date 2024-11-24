@@ -1,7 +1,7 @@
 const express = require('express')
 const morgan = require('morgan')
 const dotenv = require('dotenv')
-const mysqlPool = require('./config/db')
+const db = require('./config/db')
 //___________CONFIG_ENVIRONMENT_____________
 dotenv.config()
 
@@ -16,10 +16,14 @@ app.use(express.json());
 app.get('/v', (req,res) => {
     res.status(200).send('<h1>Backend server version 1.2</h1>')
 })
+app.use('/api/v1', require("./routes/cong_nghe_chieu.Routes"))
 
+
+
+//________________CHECK_DB_AND_RUN_SERVER_________________
 const PORT = process.env.PORT || 8080
 
-mysqlPool.query('SELECT 1').then(() => {
+db.query('SELECT 1').then(() => {
     console.log('MySQL DB is connected.');
     app.listen(PORT, () => {
         console.log(`Server is running on port ${PORT}....`)
