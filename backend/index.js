@@ -16,14 +16,14 @@ app.use(express.json());
 app.get('/v', (req,res) => {
     res.status(200).send('<h1>Backend server version 1.2</h1>')
 })
-app.use('/api/v1', require("./routes/cong_nghe_chieu.Routes"))
+app.use('/api/v1', require("./routes/chi_nhanh.Routes"))
 
 
 
 //________________CHECK_DB_AND_RUN_SERVER_________________
 const PORT = process.env.PORT || 8080
 
-db.query('SELECT * FROM cong_nghe_chieu').then(() => {
+db.query('SELECT * FROM chi_nhanh').then(() => {
     console.log('MySQL DB is connected.');
     app.listen(PORT, () => {
         console.log(`Server is running on port ${PORT}....`)
