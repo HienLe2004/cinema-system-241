@@ -8,7 +8,7 @@ const router = express.Router()
 router.get('/cong_nghe_chieu', getCong_nghe_chieu)
 router.get('/cong_nghe_chieu/:id', getCong_nghe_chieuByID)
 router.post('/cong_nghe_chieu', createCong_nghe_chieu)
-router.put('/cong_nghe_chieu/:id', updateCong_nghe_chieuByID)
+router.patch('/cong_nghe_chieu/:id', updateCong_nghe_chieuByID)
 router.delete('/cong_nghe_chieu/:id', deleteCong_nghe_chieuByID)
 
 module.exports = router

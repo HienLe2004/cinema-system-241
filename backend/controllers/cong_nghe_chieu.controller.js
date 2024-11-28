@@ -53,41 +53,36 @@ const getCong_nghe_chieuByID = async (req,res) => {
     }
 }
 
-const createCong_nghe_chieu = async (req,res) => {
+const createCong_nghe_chieu = async (req, res) => {
     try {
-        const {ma_cnc, loai} = req.body
-        if (!ma_cnc || !loai) {
-            return res.status(500).send({
-                success:false,
-                message:'missing field'
-            })
-        }
-        const data = await db.query(`INSERT INTO cong_nghe_chieu (ma_cnc, loai) VALUES (?,?)`,[ma_cnc,loai]).catch(err => {
-            return res.status(404).send({
-                success:false,
-                message:"invalid INSERT QUERY",
-                err
-            })
-        })
-        if (!data) {
-            return res.status(404).send({
+        const { loai } = req.body; // Chỉ cần thông tin "loai" từ request body
+
+        if (!loai) {
+            return res.status(400).send({
                 success: false,
-                message: "error INSERT QUERY"
-            })
+                message: 'Thiếu trường "loai".',
+            });
         }
-        res.status(200).send({
-            success:true,
-            message:"them thanh cong"
-        })
-    }catch(err) {
-        console.log(err);
+
+        // Chạy câu lệnh INSERT
+        const query = `INSERT INTO cong_nghe_chieu (loai) VALUES (?)`;
+        const [result] = await db.query(query, [loai]);
+
+        res.status(201).send({
+            success: true,
+            message: 'Công nghệ chiếu đã được thêm thành công.',
+            id: result.insertId, // Trả về ID tự động tăng
+        });
+    } catch (err) {
+        console.error(err);
         res.status(500).send({
-            success:false,
-            message:"error in createCong_nghe_chieu API",
-            err
-        })
+            success: false,
+            message: 'Đã xảy ra lỗi khi thêm công nghệ chiếu.',
+            error: err.message,
+        });
     }
-}
+};
+
 
 const updateCong_nghe_chieuByID = async (req,res) => {
     try {
