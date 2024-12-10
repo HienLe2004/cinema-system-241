@@ -1,62 +1,41 @@
-import React, { useEffect } from "react";
-import { Form, message } from "antd";
-import Button from "../../components/Button";
-import { Link, useNavigate } from "react-router-dom";
-import { LoginUser } from "../../apicalls/users";
-import { useDispatch } from "react-redux";
-import { HideLoading, ShowLoading } from "../../redux/loadersSlice";
-
-function Register() {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const onFinish = async (values) => {
-    try {
-      dispatch(ShowLoading())
-      const response = await LoginUser(values);
-      dispatch(HideLoading())
-      if (response.success) {
-        message.success(response.message);
-        localStorage.setItem("token", response.data);
-        window.location.href = "/";
-      } else {
-        message.error(response.message);
-      }
-    } catch (error) {
-      dispatch(HideLoading())
-      message.error(error.message);
-    }
+import React from "react";
+import { Form, Input } from "antd";
+import { Link } from "react-router-dom";
+import Button from "../../component/Button";
+function Login() {
+  const onFinish = (values) => {
+    console.log("Success: ", values);
   };
-
-  useEffect(() => {
-    if (localStorage.getItem("token")) {
-      navigate("/");
-    }
-  }, []);
-
   return (
-    <div className="flex justify-center h-screen items-center bg-primary">
-      <div className="card p-3 w-400">
-        <h1 className="text-xl mb-1">SHEYMOVIES - LOGIN</h1>
+    <div className="bg-brown-50 flex justify-center h-screen items-center bg-primary">
+      <div className="p-4 w-[300px] bg-Lime-50 rounded-2xl border">
+        <h1 className="text-xl mb-1 text-center ">LOGIN</h1>
         <hr />
-        <Form layout="vertical" className="mt-1" onFinish={onFinish}>
+        <Form layout="vertical" className="mt-2" onFinish={onFinish}>
+          <Form.Item
+            label="Name"
+            name="name"
+            rules={[{ required: true, message: "Please input your name!" }]}
+          >
+            <Input type="text" placeholder="Enter your name" />
+          </Form.Item>
           <Form.Item
             label="Email"
             name="email"
             rules={[{ required: true, message: "Please input your email!" }]}
           >
-            <input type="email" />
+            <Input type="email" placeholder="Enter your email" />
           </Form.Item>
           <Form.Item
             label="Password"
             name="password"
             rules={[{ required: true, message: "Please input your password!" }]}
           >
-            <input type="password" />
+            <Input.Password placeholder="Enter your password" />
           </Form.Item>
-
-          <div className="flex flex-col mt-2 gap-1">
-            <Button fullWidth title="LOGIN" type="submit" />
-            <Link to="/register" className="text-primary">
+          <div className="flex flex-col mt-2 gap-2">
+            <Button fullwidth title="LOGIN" type="submit" />
+            <Link to="/Register" className="text-primary">
               {" "}
               Don't have an account? Register
             </Link>
@@ -66,5 +45,4 @@ function Register() {
     </div>
   );
 }
-
-export default Register;
+export default Login;

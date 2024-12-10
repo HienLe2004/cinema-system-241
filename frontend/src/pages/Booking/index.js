@@ -1,8 +1,8 @@
 import React from 'react';
-import HomeMenu from './HomeMenu'; // Thanh menu
-import MovieList from './MovieList'; // Danh sách phim
-import Footer from './Footer'; // Footer
-const Home = () => {
+import HomeMenu from '../Home/HomeMenu'; // Thanh menu
+import Footer from '../Home/Footer'; // Footer
+import Selection from './seatSelection';
+const Booking = () => {
   return (
     <div className="flex flex-col min-h-screen bg-brown-100">
       {/* Header */}
@@ -11,7 +11,7 @@ const Home = () => {
       </header>
       {/* Nội dung chính */}
       <main className="flex-grow">
-        <MovieList />
+        <Selection />
       </main>
       {/* Footer */}
       <footer>
@@ -25,4 +25,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Booking;
