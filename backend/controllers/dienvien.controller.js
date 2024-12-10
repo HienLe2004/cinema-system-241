@@ -3,7 +3,7 @@ const db = require("../config/db");
 // Get all actors
 const getDienVien = async (req, res) => {
     try {
-        const data = await db.query('SELECT * FROM DIEN_VIEN');
+        const data = await db.query('CALL GetAllDienVien()');
         if (!data || data[0].length === 0) {
             return res.status(404).send({
                 success: false,
@@ -25,6 +25,7 @@ const getDienVien = async (req, res) => {
     }
 };
 
+
 // Get actors by film ID
 const getDienVienByFilmID = async (req, res) => {
     try {
@@ -35,17 +36,22 @@ const getDienVienByFilmID = async (req, res) => {
                 message: "Missing or invalid film ID",
             });
         }
-        const data = await db.query('SELECT * FROM DIEN_VIEN WHERE MaP = ?', [phimID]);
-        if (!data || data[0].length === 0) {
+
+        // Call the stored procedure to get actors by film ID
+        const [rows] = await db.query('CALL GetDienVienByFilmID(?)', [phimID]);
+
+        // Check if any actors are found
+        if (!rows || rows.length === 0) {
             return res.status(404).send({
                 success: false,
                 message: "No actors found for the specified film",
             });
         }
+
         res.status(200).send({
             success: true,
             message: "Actors retrieved successfully",
-            data: data[0],
+            data: rows[0], // The result of the stored procedure will be in the first element of the array
         });
     } catch (err) {
         console.error(err);
@@ -56,6 +62,7 @@ const getDienVienByFilmID = async (req, res) => {
         });
     }
 };
+
 
 // Create a new actor for a film
 const createDienVien = async (req, res) => {

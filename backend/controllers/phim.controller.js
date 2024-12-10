@@ -7,7 +7,7 @@ const validNhan = ['P', 'K', 'T13', 'T16', 'T18', 'C'];
 // Get all films
 const getPhim = async (req, res) => {
     try {
-        const data = await db.query('SELECT * FROM PHIM');
+        const data = await db.query('CALL GetAllFilms()');
         if (!data || data[0].length === 0) {
             return res.status(404).send({
                 success: false,
@@ -39,13 +39,19 @@ const getPhimByID = async (req, res) => {
                 message: "Missing or invalid film ID",
             });
         }
-        const data = await db.query('SELECT * FROM PHIM WHERE MaP = ?', [phimID]);
+
+        // Calling the stored procedure 'getFilmByID' and passing the phimID as parameter
+        const query = 'CALL getFilmByID(?)';
+        const data = await db.query(query, [phimID]);
+
+        // Assuming the stored procedure returns the result as data[0]
         if (!data || data[0].length === 0) {
             return res.status(404).send({
                 success: false,
                 message: "Film not found",
             });
         }
+
         res.status(200).send({
             success: true,
             message: "Film retrieved successfully",
@@ -60,6 +66,7 @@ const getPhimByID = async (req, res) => {
         });
     }
 };
+
 
 // Create a new film
 const createPhim = async (req, res) => {
@@ -183,8 +190,9 @@ const deletePhimByID = async (req, res) => {
             });
         }
 
-        const query = `DELETE FROM PHIM WHERE MaP = ?`;
-        const [result] = await db.query(query, [phimID]);
+        // Xóa bản ghi với ID đã cho
+        const queryDelete = `DELETE FROM PHIM WHERE MaP = ?`;
+        const [result] = await db.query(queryDelete, [phimID]);
 
         if (result.affectedRows === 0) {
             return res.status(404).send({
@@ -192,6 +200,9 @@ const deletePhimByID = async (req, res) => {
                 message: "Film not found",
             });
         }
+
+        const queryAlterAutoIncrement = `ALTER TABLE PHIM AUTO_INCREMENT = ${phimID}`;
+        await db.query(queryAlterAutoIncrement); 
 
         res.status(200).send({
             success: true,
