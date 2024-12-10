@@ -1,0 +1,15 @@
+input {
+    height: 30px;
+    padding-left: 10px;
+    border: 1px solid #8a8a8a;
+    width: 100%;
+    border-radius: 7px;
+}
+input:focus {
+    outline: none;
+    border: 1px solid #373737;
+}
+
+.Button-border {
+    border-radius: 8px;
+}
