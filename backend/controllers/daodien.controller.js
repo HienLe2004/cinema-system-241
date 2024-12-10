@@ -1,9 +1,9 @@
 const db = require("../config/db");
 
-// Get all directors
+// Get all directors using stored procedure
 const getDaoDien = async (req, res) => {
     try {
-        const data = await db.query('SELECT * FROM DAO_DIEN');
+        const data = await db.query('CALL GetAllDaoDien()');
         if (!data || data[0].length === 0) {
             return res.status(404).send({
                 success: false,
@@ -25,7 +25,7 @@ const getDaoDien = async (req, res) => {
     }
 };
 
-// Get a director by film ID
+// Get a director by film ID using stored procedure
 const getDaoDienByFilmID = async (req, res) => {
     try {
         const phimID = req.params.id;
@@ -35,7 +35,7 @@ const getDaoDienByFilmID = async (req, res) => {
                 message: "Missing or invalid film ID",
             });
         }
-        const data = await db.query('SELECT * FROM DAO_DIEN WHERE MaP = ?', [phimID]);
+        const data = await db.query('CALL GetDaoDienByFilmID(?)', [phimID]);
         if (!data || data[0].length === 0) {
             return res.status(404).send({
                 success: false,
@@ -56,6 +56,7 @@ const getDaoDienByFilmID = async (req, res) => {
         });
     }
 };
+
 
 // Create a new director for a film
 const createDaoDien = async (req, res) => {

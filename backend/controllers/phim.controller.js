@@ -94,16 +94,21 @@ const createPhim = async (req, res) => {
             });
         }
 
+        // Cập nhật câu lệnh gọi với số lượng tham số đúng (10 IN và 1 OUT)
         const query = `
-            INSERT INTO PHIM (NSX, ThoiLuong, Poster, NgayKC, Ten, MoTa, Trailer, GioiHanDoTuoi, GiaGoc, Nhan)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            CALL CreateFilm(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, @phimID)
         `;
-        const [result] = await db.query(query, [NSX, ThoiLuong, Poster, NgayKC, Ten, MoTa, Trailer, GioiHanDoTuoi, GiaGoc, Nhan]);
+        
+        // Thực hiện câu lệnh SQL để chèn phim
+        await db.query(query, [NSX, ThoiLuong, Poster, NgayKC, Ten, MoTa, Trailer, GioiHanDoTuoi, GiaGoc, Nhan]);
+
+        // Lấy giá trị phimID từ biến OUT
+        const [result] = await db.query("SELECT @phimID AS phimID");
 
         res.status(201).send({
             success: true,
             message: "Film created successfully",
-            id: result.insertId,
+            id: result[0].phimID,  // Trả về ID từ stored procedure
         });
     } catch (err) {
         console.error(err);
@@ -115,16 +120,17 @@ const createPhim = async (req, res) => {
     }
 };
 
+
 // Update a film by ID
 const updatePhimByID = async (req, res) => {
     try {
         const phimID = req.params.id;
         const { NSX, ThoiLuong, Poster, NgayKC, Ten, MoTa, Trailer, GioiHanDoTuoi, GiaGoc, Nhan } = req.body;
 
-        if (!phimID || (!NSX && !ThoiLuong && !Ten && !GioiHanDoTuoi && !Nhan)) {
+        if (!phimID) {
             return res.status(400).send({
                 success: false,
-                message: "Missing film ID or fields to update",
+                message: "Missing film ID",
             });
         }
 
@@ -142,21 +148,23 @@ const updatePhimByID = async (req, res) => {
             });
         }
 
+        // Prepare query to update film by ID using stored procedure
         const query = `
-            UPDATE PHIM
-            SET NSX = COALESCE(?, NSX),
-                ThoiLuong = COALESCE(?, ThoiLuong),
-                Poster = COALESCE(?, Poster),
-                NgayKC = COALESCE(?, NgayKC),
-                Ten = COALESCE(?, Ten),
-                MoTa = COALESCE(?, MoTa),
-                Trailer = COALESCE(?, Trailer),
-                GioiHanDoTuoi = COALESCE(?, GioiHanDoTuoi),
-                GiaGoc = COALESCE(?, GiaGoc),
-                Nhan = COALESCE(?, Nhan)
-            WHERE MaP = ?
+            CALL UpdateFilmByID(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `;
-        const [result] = await db.query(query, [NSX, ThoiLuong, Poster, NgayKC, Ten, MoTa, Trailer, GioiHanDoTuoi, GiaGoc, Nhan, phimID]);
+        const [result] = await db.query(query, [
+            phimID, // Make sure phimID is the first argument
+            NSX ?? null,
+            ThoiLuong ?? null,
+            Poster ?? null,
+            NgayKC ?? null,
+            Ten ?? null,
+            MoTa ?? null,
+            Trailer ?? null,
+            GioiHanDoTuoi ?? null,
+            GiaGoc ?? null,
+            Nhan ?? null
+        ]);
 
         if (result.affectedRows === 0) {
             return res.status(404).send({
@@ -178,6 +186,7 @@ const updatePhimByID = async (req, res) => {
         });
     }
 };
+
 
 // Delete a film by ID
 const deletePhimByID = async (req, res) => {

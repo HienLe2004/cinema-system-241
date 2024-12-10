@@ -1,9 +1,9 @@
 const db = require("../config/db");
 
-// Get all genres
+// Get all genres using stored procedure
 const getTheLoai = async (req, res) => {
     try {
-        const data = await db.query('SELECT * FROM THE_LOAI');
+        const data = await db.query('CALL GetAllTheLoai()');
         if (!data || data[0].length === 0) {
             return res.status(404).send({
                 success: false,
@@ -25,7 +25,7 @@ const getTheLoai = async (req, res) => {
     }
 };
 
-// Get genres by film ID
+// Get genres by film ID using stored procedure
 const getTheLoaiByFilmID = async (req, res) => {
     try {
         const phimID = req.params.id;
@@ -35,7 +35,7 @@ const getTheLoaiByFilmID = async (req, res) => {
                 message: "Missing or invalid film ID",
             });
         }
-        const data = await db.query('SELECT * FROM THE_LOAI WHERE MaP = ?', [phimID]);
+        const data = await db.query('CALL GetTheLoaiByFilmID(?)', [phimID]);
         if (!data || data[0].length === 0) {
             return res.status(404).send({
                 success: false,
