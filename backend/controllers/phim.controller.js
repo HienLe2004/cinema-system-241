@@ -94,16 +94,21 @@ const createPhim = async (req, res) => {
             });
         }
 
+        // Cập nhật câu lệnh gọi với số lượng tham số đúng (10 IN và 1 OUT)
         const query = `
-            INSERT INTO PHIM (NSX, ThoiLuong, Poster, NgayKC, Ten, MoTa, Trailer, GioiHanDoTuoi, GiaGoc, Nhan)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            CALL createFilm(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, @phimID)
         `;
-        const [result] = await db.query(query, [NSX, ThoiLuong, Poster, NgayKC, Ten, MoTa, Trailer, GioiHanDoTuoi, GiaGoc, Nhan]);
+        
+        // Thực hiện câu lệnh SQL để chèn phim
+        await db.query(query, [NSX, ThoiLuong, Poster, NgayKC, Ten, MoTa, Trailer, GioiHanDoTuoi, GiaGoc, Nhan]);
+
+        // Lấy giá trị phimID từ biến OUT
+        const [result] = await db.query("SELECT @phimID AS phimID");
 
         res.status(201).send({
             success: true,
             message: "Film created successfully",
-            id: result.insertId,
+            id: result[0].phimID,  // Trả về ID từ stored procedure
         });
     } catch (err) {
         console.error(err);
@@ -114,6 +119,7 @@ const createPhim = async (req, res) => {
         });
     }
 };
+
 
 // Update a film by ID
 const updatePhimByID = async (req, res) => {
