@@ -1,5 +1,6 @@
 const express = require('express')
 const morgan = require('morgan')
+const cors = require('cors');
 const dotenv = require('dotenv')
 const db = require('./config/db')
 //___________CONFIG_ENVIRONMENT_____________
@@ -11,6 +12,9 @@ const app = express()
 //_______________MIDDLEWARES__________________
 app.use(morgan("dev"));
 app.use(express.json());
+app.use(cors({
+    origin: 'http://localhost:3000'
+}));
 
 //________________ROUTES_________________
 app.get('/v', (req,res) => {
