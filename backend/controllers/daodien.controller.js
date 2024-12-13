@@ -97,7 +97,7 @@ const createDaoDien = async (req, res) => {
 };
 
 // Update a director's information by film ID
-const updateDaoDienByID = async (req, res) => {
+const updateDaoDienByFilmID = async (req, res) => {
     try {
         const { MaP, Ten } = req.body;
         const phimID = req.params.id;
@@ -143,7 +143,7 @@ const updateDaoDienByID = async (req, res) => {
 };
 
 // Delete a director by film ID
-const deleteDaoDienByID = async (req, res) => {
+const deleteDaoDienByFilmID = async (req, res) => {
     try {
         const phimID = req.params.id;
         const { MaP } = req.body;
@@ -183,6 +183,6 @@ module.exports = {
     getDaoDien,
     getDaoDienByFilmID,
     createDaoDien,
-    updateDaoDienByID,
-    deleteDaoDienByID,
+    updateDaoDienByFilmID,
+    deleteDaoDienByFilmID,
 };

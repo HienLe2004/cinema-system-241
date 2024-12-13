@@ -96,7 +96,7 @@ const createTheLoai = async (req, res) => {
 };
 
 // Delete a genre by film ID
-const deleteTheLoaiByID = async (req, res) => {
+const deleteTheLoaiByFilmID = async (req, res) => {
     try {
         const phimID = req.params.id;
         const { TenTheLoai } = req.body;
@@ -136,5 +136,5 @@ module.exports = {
     getTheLoai,
     getTheLoaiByFilmID,
     createTheLoai,
-    deleteTheLoaiByID,
+    deleteTheLoaiByFilmID,
 };

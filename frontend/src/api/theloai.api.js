@@ -4,6 +4,12 @@ const API_URL = 'http://localhost:8080/api/v1/the_loai';
 export async function getAllTheLoai() {
     return await axios.get(API_URL)
 }
-export async function getTheLoaiByFilmID(filmID) {
-    return await axios.get(API_URL + `/film/${filmID}`)
+export async function getTheLoaiByFilmID(id) {
+    return await axios.get(API_URL + `/film/${id}`)
+}
+export async function createTheLoai(body) {
+    return await axios.post(API_URL, body)
+}
+export async function deleteTheLoaiByFilmID(id, body) {
+    return await axios.delete(API_URL+`/${id}`,body)
 }

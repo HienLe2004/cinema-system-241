@@ -103,7 +103,7 @@ const createDienVien = async (req, res) => {
 };
 
 // Update an actor's information by film ID
-const updateDienVienByID = async (req, res) => {
+const updateDienVienByFilmID = async (req, res) => {
     try {
         const { MaP, VaiDien, Ten } = req.body;
         const phimID = req.params.id;
@@ -149,7 +149,7 @@ const updateDienVienByID = async (req, res) => {
 };
 
 // Delete an actor by film ID
-const deleteDienVienByID = async (req, res) => {
+const deleteDienVienByFilmID = async (req, res) => {
     try {
         const phimID = req.params.id;
         const { MaP } = req.body;
@@ -189,6 +189,6 @@ module.exports = {
     getDienVien,
     getDienVienByFilmID,
     createDienVien,
-    updateDienVienByID,
-    deleteDienVienByID,
+    updateDienVienByFilmID,
+    deleteDienVienByFilmID,
 };
