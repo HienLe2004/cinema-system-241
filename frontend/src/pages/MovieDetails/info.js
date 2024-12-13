@@ -125,12 +125,18 @@
 //   );
 // };
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { getTheLoaiByFilmID } from '../../api/theloai.api';
+import { getDaoDienByFilmID } from '../../api/daodien.api';
+import { getDienVienByFilmID } from '../../api/dienvien.api';
 
 const MovieDetail = () => {
   const location = useLocation();
   const { movie } = location.state || {};
+  const [theLoai, setTheLoai] = useState([]);
+  const [daoDien, setDaodien] = useState([]);
+  const [dienVien, setDienVien] = useState([]);
   const [selectedShowtime, setSelectedShowtime] = useState(null);
   const navigate = useNavigate();
 
@@ -158,6 +164,24 @@ const MovieDetail = () => {
   //   acc[showtime.branch].push(showtime);
   //   return acc;
   // }, {});
+  useEffect(()=>{
+    const fetchTheLoaiPhim = async () => {
+      const {data} = await getTheLoaiByFilmID(movie.MaP)
+      setTheLoai(data.data[0].map(one => one.TenTheLoai))
+    }
+    const fetchDaoDienPhim = async () => {
+      const {data} = await getDaoDienByFilmID(movie.MaP)
+      setDaodien(data.data[0].map(one => one.Ten))
+    }
+    const fetchDienVienPhim = async () => {
+      const {data} = await getDienVienByFilmID(movie.MaP)
+      console.log(data)
+      setDienVien(data.data.map(one => (one.Ten + ` (${one.VaiDien})`)))
+    }
+    fetchTheLoaiPhim()
+    fetchDaoDienPhim()
+    fetchDienVienPhim()
+  },[])
 
   return (
     <div className="container mx-auto p-24 ">
@@ -167,12 +191,12 @@ const MovieDetail = () => {
         </div>
         <div className="md:w-1/2 text-center md:text-left">
           <h2 className="text-4xl font-bold text-red-600 mb-2">{movie.Ten}</h2>
-          <p className="text-gray-900"><strong>Giới hạn tuổi:</strong> {movie.GioiHanDoTuoi}+</p>
+          <p className="text-gray-900"><strong>Nhãn:</strong> {movie.Nhan + " (" + movie.GioiHanDoTuoi + "+)"}</p>
           <p className="text-gray-900"><strong>Thời gian:</strong> {movie.ThoiLuong} phút</p>
-          <p className="text-gray-900"><strong>Thể loại:</strong> {movie.genre}</p>
+          <p className="text-gray-900"><strong>Thể loại:</strong> {theLoai.join(", ")}</p>
           <p className="text-gray-900"><strong>Mô tả:</strong> {movie.MoTa}</p>
-          <p className="text-gray-900"><strong>Đạo diễn:</strong> {movie.director}</p>
-          <p className="text-gray-900"><strong>Diễn viên:</strong> {movie.actors}</p>
+          <p className="text-gray-900"><strong>Đạo diễn:</strong> {daoDien.join(", ")}</p>
+          <p className="text-gray-900"><strong>Diễn viên:</strong> {dienVien.join(", ")}</p>
         </div>
       </div>
 
