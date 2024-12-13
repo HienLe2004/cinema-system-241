@@ -140,35 +140,37 @@ const MovieDetail = () => {
 
   const handleBookingRedirect = () => {
     if (selectedShowtime) {
-      navigate(`/booking/${movie.id}`, { state: { showtime: selectedShowtime } });
+      navigate(`/booking/${movie.MaP}`, { state: { showtime: selectedShowtime } });
     } else {
       alert('Vui lòng chọn một suất chiếu!');
     }
   };
 
   // Kiểm tra xem movie có tồn tại và có showtimes không
-  if (!movie || !movie.showtimes) {
-    return <p className="text-center text-red-600">Không tìm thấy thông tin phim!</p>;
-  }
+  // if (!movie || !movie.showtimes) {
+  //   return <p className="text-center text-red-600">Không tìm thấy thông tin phim!</p>;
+  // }
 
   // Nhóm suất chiếu theo chi nhánh
-  const groupedShowtimes = movie.showtimes.reduce((acc, showtime) => {
-    acc[showtime.branch] = acc[showtime.branch] || [];
-    acc[showtime.branch].push(showtime);
-    return acc;
-  }, {});
+  const groupedShowtimes = {}
+  // const groupedShowtimes = movie.showtimes.reduce((acc, showtime) => {
+  //   acc[showtime.branch] = acc[showtime.branch] || [];
+  //   acc[showtime.branch].push(showtime);
+  //   return acc;
+  // }, {});
 
   return (
     <div className="container mx-auto p-24 ">
       <div className="flex flex-col md:flex-row justify-center items-center bg-white rounded-lg shadow-lg p-6 space-y-6 md:space-y-0 md:space-x-8 border border-gray-100 bg-gray-200">
         <div className="md:w-1/2 flex justify-center">
-          <img src={movie.poster} alt={movie.title} className="rounded-lg shadow-lg w-full h-auto max-w-md object-cover " />
+          <img src={movie.Poster} alt={movie.Ten} className="rounded-lg shadow-lg max-w-md object-cover " />
         </div>
         <div className="md:w-1/2 text-center md:text-left">
-          <h2 className="text-4xl font-bold text-red-600 mb-2">{movie.title}</h2>
-          <p className="text-gray-900"><strong>Giới hạn tuổi:</strong> {movie.ageLimit}+</p>
-          <p className="text-gray-900"><strong>Thời gian:</strong> {movie.duration} phút</p>
+          <h2 className="text-4xl font-bold text-red-600 mb-2">{movie.Ten}</h2>
+          <p className="text-gray-900"><strong>Giới hạn tuổi:</strong> {movie.GioiHanDoTuoi}+</p>
+          <p className="text-gray-900"><strong>Thời gian:</strong> {movie.ThoiLuong} phút</p>
           <p className="text-gray-900"><strong>Thể loại:</strong> {movie.genre}</p>
+          <p className="text-gray-900"><strong>Mô tả:</strong> {movie.MoTa}</p>
           <p className="text-gray-900"><strong>Đạo diễn:</strong> {movie.director}</p>
           <p className="text-gray-900"><strong>Diễn viên:</strong> {movie.actors}</p>
         </div>
