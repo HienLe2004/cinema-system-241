@@ -138,7 +138,8 @@ const MovieDetail = () => {
   const [theLoai, setTheLoai] = useState([]);
   const [daoDien, setDaodien] = useState([]);
   const [dienVien, setDienVien] = useState([]);
-  const [hinhThucChieu, setHinhThucChieu] = useState([]);
+  const [loaiPhienDich, setLoaiPhienDich] = useState([]);
+  const [congNgheChieu, setCongNgheChieu] = useState([]);
   const [selectedShowtime, setSelectedShowtime] = useState(null);
   const navigate = useNavigate();
 
@@ -181,7 +182,31 @@ const MovieDetail = () => {
     }
     const fetchHinhThucChieuPhim = async () => {
       const {data} = await getPhimCoHTCByMaP(movie.MaP)
-      setHinhThucChieu(data.data[0].map(one => (`${one.LoaiCongNgheChieu} ${one.LoaiPhienDich} ${one.TenNgonNgu}`)));
+      const uniqueLoaiCongNgheChieu = data.data[0].reduce((unique, item) => {
+        if (!unique.includes(item.LoaiCongNgheChieu)) {
+          unique.push(item.LoaiCongNgheChieu);
+        }
+        return unique;
+      },[])
+      setCongNgheChieu(uniqueLoaiCongNgheChieu)
+
+      const uniqueLoaiPhienDich = data.data[0].reduce((unique, item) => {
+        if (!unique.includes(item.LoaiPhienDich)) {
+          unique.push(item.LoaiPhienDich);
+        }
+        return unique;
+      },[])
+
+      let loaiPhienDichWithTenNgonNgu = uniqueLoaiPhienDich.map(one => {
+        const uniqueTenNgonNgu = data.data[0].reduce((unique, item) => {
+          if (!unique.includes(item.TenNgonNgu) && item.LoaiPhienDich == one) {
+            unique.push(item.TenNgonNgu);
+          }
+          return unique;
+        },[])
+        return one = `${one} (${uniqueTenNgonNgu.join(', ')})`
+      })
+      setLoaiPhienDich(loaiPhienDichWithTenNgonNgu)
     }
     fetchTheLoaiPhim()
     fetchDaoDienPhim()
@@ -208,7 +233,8 @@ const MovieDetail = () => {
               Link
             </a>
           </p>
-          <p className="text-gray-900"><strong>Hình thức chiếu:</strong> {hinhThucChieu.join(", ")}</p>
+          <p className="text-gray-900"><strong>Hình thức chiếu:</strong> {loaiPhienDich.join(", ")}</p>
+          <p className="text-gray-900"><strong>Công nghệ chiếu:</strong> {congNgheChieu.join(", ")}</p>
         </div>
       </div>
 
