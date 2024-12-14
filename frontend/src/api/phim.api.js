@@ -14,5 +14,5 @@ export async function updatePhimByID(body) {
     return await axios.patch(API_URL, body)
 }
 export async function deletePhimByID(id) {
-    return await axios.delete(API_URL+`${id}`)
+    return await axios.delete(API_URL+`/${id}`)
 }

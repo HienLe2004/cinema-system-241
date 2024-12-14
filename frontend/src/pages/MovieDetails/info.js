@@ -86,14 +86,11 @@ const MovieDetail = () => {
     }
     const fetchSuatChieuPhim = async () => {
       const {data} = await getSuatChieuByMaP(movie.MaP)
-      let formatedSuatChieu = data.data.reduce((list, suat) => {
+      let formatedSuatChieu = data?.data?.reduce((list, suat) => {
         list[suat.TenChiNhanh] = list[suat.TenChiNhanh] || []
         list[suat.TenChiNhanh].push(suat)
         return list
       },{})
-      console.log(formatedSuatChieu)
-      console.log(format(new Date(formatedSuatChieu['CINESTAR HAI BÀ TRƯNG'][0].Ngay),"dd-MM-yyyy"))
-      console.log()
       setSuatChieu(formatedSuatChieu)
     }
     fetchTheLoaiPhim()
@@ -129,7 +126,7 @@ const MovieDetail = () => {
 
       <div className="mt-8 bg-white rounded-lg shadow-lg p-6 bg-gray-200">
         <h3 className="text-2xl font-semibold text-red-600 mb-4"><strong>Chọn suất chiếu</strong></h3>
-        {Object.keys(suatChieu).length > 0 ? (
+        {Object.keys(suatChieu)?.length > 0 ? (
           Object.keys(suatChieu).map((branch) => (
             <div key={branch} className="mb-6">
               <h4 className="text-xl font-semibold text-gray-700 mb-2">{branch}</h4>

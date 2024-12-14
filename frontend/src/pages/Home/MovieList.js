@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Button } from "antd";
 import { Link } from "react-router-dom";
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
-import movies from "./movieData"; // Nhập dữ liệu phim từ file moviesData.js
 import { getAllPhim } from "../../api/phim.api";
 
 const MovieList = () => {

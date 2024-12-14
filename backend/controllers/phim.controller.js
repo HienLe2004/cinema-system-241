@@ -72,7 +72,6 @@ const getPhimByID = async (req, res) => {
 const createPhim = async (req, res) => {
     try {
         const { NSX, ThoiLuong, Poster, NgayKC, Ten, MoTa, Trailer, GioiHanDoTuoi, GiaGoc, Nhan } = req.body;
-
         // Validate ENUM fields
         if (!validGioiHanDoTuoi.includes(GioiHanDoTuoi)) {
             return res.status(400).send({

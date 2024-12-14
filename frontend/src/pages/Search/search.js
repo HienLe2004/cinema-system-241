@@ -1,8 +1,8 @@
 import React from 'react';
-import HomeMenu from './HomeMenu'; // Thanh menu
-import MovieList from './MovieList'; // Danh sách phim
-import Footer from './Footer'; // Footer
-const Home = () => {
+import HomeMenu from '../Home/HomeMenu'; // Thanh menu
+import Footer from '../Home/Footer'; // Footer
+import SearchResults from './searchResult';
+const Search = () => {
   return (
     <div className="flex flex-col min-h-screen bg-brown-100">
       {/* Header */}
@@ -11,7 +11,7 @@ const Home = () => {
       </header>
       {/* Nội dung chính */}
       <main className="flex-grow">
-        <MovieList />
+        <SearchResults />
       </main>
       {/* Footer */}
       <footer>
@@ -19,10 +19,10 @@ const Home = () => {
       </footer>
       {/* Lót dưới cùng của trang */}
       <div className="bg-brown-500 text-center text-sm text-gray-400 p-4 font-bold">
-        &copy; 2024 Công ty Phim ABC. All rights reserved.
+      &copy; 2024 ASSIGNMENT2 - 241 - DATABASE.
       </div>
     </div>
   );
 };
 
-export default Home;
+export default Search;
