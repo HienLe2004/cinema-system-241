@@ -1,17 +1,16 @@
-import React, { useState, useRef } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { format, parse } from "date-fns";
+import React, { useState, useRef, useEffect } from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { getGheByMaPCAndMaCN } from "../../api/ghe.api";
 
 const Selection = () => {
   const { id } = useParams(); // Lấy ID từ URL
+  const location = useLocation();
+  const {suatChieu} = location.state;
+  const [maxX, setMaxX] = useState(0);
+  const [maxY, setMaxY] = useState(0);
+  const [ghe, setGhe] = useState([]);
   const [selectedSeats, setSelectedSeats] = useState([]); // Ghế đã chọn
-  const rows = Array.from({ length: 18 }, (_, i) =>
-    String.fromCharCode(65 + i)
-  ); // Tạo hàng từ A -> R
-  const seatsPerRow = 15; // Số ghế mỗi hàng
-  const coupleSeatsRow = "R"; // Hàng ghế đôi
-  const coupleSeatsCount = 5; // Số ghế đôi ở hàng R
-  const vipRows = ["H", "I", "J"]; // Ghế VIP ở giữa các hàng H, I, J
-  const vipSeatRange = [6, 10]; // Khoảng ghế VIP ở giữa (từ ghế số 6 -> 10)
   const bookedSeats = ["B5", "H7", "I8", "J9", "R2"]; // Các ghế đã đặt sẵn
 
   const seatRefs = useRef({});
@@ -29,17 +28,10 @@ const Selection = () => {
   };
 
   // Lấy lớp CSS của từng ghế
-  const getSeatClass = (row, seatNumber) => {
-    const seatId = `${row}${seatNumber}`;
-    if (bookedSeats.includes(seatId)) return "bg-red-500 cursor-not-allowed"; // Ghế đã đặt
-    if (selectedSeats.includes(seatId)) return "bg-blue-500"; // Ghế đang chọn
-    if (row === coupleSeatsRow && seatNumber <= coupleSeatsCount)
-      return "bg-pink-400 hover:bg-blue-300"; // Ghế đôi
-    if (
-      vipRows.includes(row) &&
-      seatNumber >= vipSeatRange[0] &&
-      seatNumber <= vipSeatRange[1]
-    )
+  const getSeatClass = (item) => {
+    if (bookedSeats.includes(item.MaG)) return "bg-red-500 cursor-not-allowed"; // Ghế đã đặt
+    if (selectedSeats.includes(item.MaG)) return "bg-blue-500"; // Ghế đang chọn
+    if (item.LoaiGhe == "VIP") 
       return "bg-yellow-400 hover:bg-blue-300"; // Ghế VIP
     return "bg-gray-300 hover:bg-blue-300"; // Ghế thường
   };
@@ -66,9 +58,31 @@ const Selection = () => {
       },
     });
   };
-
+  useEffect(()=>{
+    const fetchGhe = async () => {
+      const {data} = await getGheByMaPCAndMaCN(suatChieu.MaPC, suatChieu.MaCN)
+      console.log(data.data)
+      setGhe(data.data)
+      data.data.map(one => {
+        setMaxX(Math.max(one.ToaDoX, maxX))
+        setMaxY(Math.max(one.ToaDoY, maxY))
+      })
+    }
+    fetchGhe()
+  },[])
   return (
     <div className="p-12">
+      <div className="text-center font-bold text-xl flex flex-col gap-y-5">
+        <div className="text-4xl">
+          {`${suatChieu.TenPhim}`}
+        </div>
+        <div>
+          {`${suatChieu.TenChiNhanh} - ${suatChieu.PhongChieu}`}
+        </div>
+        <div>
+          {`${format(parse(suatChieu.Gio, "kk:mm:ss", new Date()), "kk:mm")} - ${suatChieu.Thu} ${format(new Date(suatChieu.Ngay), "dd-MM-yyyy")}`}
+        </div>
+      </div>
       {/* Sơ đồ màn hình và ghế */}
       <div className="relative w-full max-w-4xl mx-auto border rounded-3xl bg-Lime-100 mt-6 mb-6 pr-2 pl-2">
         <div className="text-center text-white py-2 rounded-3xl w-3/4 mx-auto mb-4 mt-4 font-bold text-3xl">
@@ -76,28 +90,24 @@ const Selection = () => {
         </div>
         <hr />
         <div className="flex flex-col items-center mt-4">
-          {rows.map((row) => (
-            <div key={row} className="flex items-center justify-center mb-2">
+          {Array(maxX).fill().map((row, x) => (
+            <div key={x} className="flex items-center justify-center mb-2">
               <div className="w-8 text-center font-semibold text-black">
-                {row}
+                {String.fromCharCode(65 + x)}
               </div>
               <div className="flex">
-                {Array(row === coupleSeatsRow ? coupleSeatsCount : seatsPerRow)
+                {Array(maxY)
                   .fill()
-                  .map((_, i) => {
-                    const seatNumber = i + 1;
-                    const seatId = `${row}${seatNumber}`;
+                  .map((_, y) => {
+                    const item = ghe.find(one => one.ToaDoX === x + 1 && one.ToaDoY === y + 1)
                     return (
                       <div
-                        key={seatId}
+                        key={item.MaG}
                         ref={(el) => {
-                          seatRefs.current[seatId] = el; // Gán ref cho mỗi ghế
+                          seatRefs.current[item.MaG] = el; // Gán ref cho mỗi ghế
                         }}
-                        className={`w-8 h-8 m-1 rounded ${getSeatClass(
-                          row,
-                          seatNumber
-                        )}`}
-                        onClick={() => handleSeatClick(seatId)}
+                        className={`w-8 h-8 m-1 rounded ${getSeatClass(item)}`}
+                        onClick={() => handleSeatClick(item.MaG)}
                       ></div>
                     );
                   })}
@@ -118,10 +128,6 @@ const Selection = () => {
           <div className="flex items-center">
             <div className="w-8 h-8 bg-yellow-400 rounded mr-2"></div>
             <span>Ghế VIP</span>
-          </div>
-          <div className="flex items-center">
-            <div className="w-8 h-8 bg-pink-400 rounded mr-2"></div>
-            <span>Ghế Đôi</span>
           </div>
           <div className="flex items-center">
             <div className="w-8 h-8 bg-red-500 rounded mr-2"></div>

@@ -2,6 +2,7 @@ import React from 'react';
 import HomeMenu from '../Home/HomeMenu'; // Thanh menu
 import Footer from '../Home/Footer'; // Footer
 import Selection from './seatSelection';
+import { useLocation } from 'react-router-dom';
 const Booking = () => {
   return (
     <div className="flex flex-col min-h-screen bg-brown-100">

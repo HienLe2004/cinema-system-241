@@ -25,24 +25,12 @@ const MovieDetail = () => {
 
   const handleBookingRedirect = () => {
     if (selectedShowtime) {
-      navigate(`/booking/${movie.MaP}`, { state: { showtime: selectedShowtime } });
+      navigate(`/booking/${movie.MaP}`, { state: { suatChieu: selectedShowtime } });
     } else {
       alert('Vui lòng chọn một suất chiếu!');
     }
   };
 
-  // Kiểm tra xem movie có tồn tại và có showtimes không
-  // if (!movie || !movie.showtimes) {
-  //   return <p className="text-center text-red-600">Không tìm thấy thông tin phim!</p>;
-  // }
-
-  // Nhóm suất chiếu theo chi nhánh
-  const groupedShowtimes = {}
-  // const groupedShowtimes = movie.showtimes.reduce((acc, showtime) => {
-  //   acc[showtime.branch] = acc[showtime.branch] || [];
-  //   acc[showtime.branch].push(showtime);
-  //   return acc;
-  // }, {});
   useEffect(()=>{
     const fetchTheLoaiPhim = async () => {
       const {data} = await getTheLoaiByPhimID(movie.MaP)
@@ -85,16 +73,13 @@ const MovieDetail = () => {
       setLoaiPhienDich(loaiPhienDichWithTenNgonNgu)
     }
     const fetchSuatChieuPhim = async () => {
-      const {data} = await getSuatChieuByMaP(movie.MaP)
-      let formatedSuatChieu = data.data.reduce((list, suat) => {
+      const {data} = await getSuatChieuByMaP(movie.MaP) 
+      let formatedSuatChieu = data.data?.reduce((list, suat) => {
         list[suat.TenChiNhanh] = list[suat.TenChiNhanh] || []
         list[suat.TenChiNhanh].push(suat)
         return list
       },{})
-      console.log(formatedSuatChieu)
-      console.log(format(new Date(formatedSuatChieu['CINESTAR HAI BÀ TRƯNG'][0].Ngay),"dd-MM-yyyy"))
-      console.log()
-      setSuatChieu(formatedSuatChieu)
+      setSuatChieu(formatedSuatChieu || {})
     }
     fetchTheLoaiPhim()
     fetchDaoDienPhim()

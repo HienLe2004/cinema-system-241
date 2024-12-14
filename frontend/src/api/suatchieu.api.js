@@ -5,5 +5,11 @@ export async function getAllSuatChieu() {
     return await axios.get(API_URL)
 }
 export async function getSuatChieuByMaP(id) {
-    return await axios.get(API_URL+`/${id}`)
+    try{
+        const data = await axios.get(API_URL+`/${id}`)
+        return data
+    }
+    catch(err){
+        return {data:{}}
+    }
 }
