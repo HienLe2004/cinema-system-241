@@ -43,18 +43,11 @@ const Selection = () => {
       return;
     }
 
-    // Thông tin phim và suất chiếu
-    const movieTitle = "Tên Phim"; // Tên phim
-    const theater = "Rạp ABC"; // Tên rạp
-    const showTime = "19:00"; // Giờ chiếu
-
     // Chuyển tới trang Ticket và truyền thông tin
     navigate(`/ticket/${id}`, {
       state: {
-        selectedSeats,
-        movieTitle,
-        theater,
-        showTime,
+        cacGheDaChon: (selectedSeats.map(one => {return ghe.find(item => item.MaG === one)})),
+        suatChieu: suatChieu
       },
     });
   };
@@ -95,7 +88,7 @@ const Selection = () => {
               <div className="w-8 text-center font-semibold text-black">
                 {String.fromCharCode(65 + x)}
               </div>
-              <div className="flex">
+              <div className="flex mr-10">
                 {Array(maxY)
                   .fill()
                   .map((_, y) => {
