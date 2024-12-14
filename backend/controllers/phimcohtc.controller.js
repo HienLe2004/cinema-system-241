@@ -41,7 +41,7 @@ const getPhimCoHTCByPhimID = async (req, res) => {
             });
         }
 
-        // Call the stored procedure that only takes MaP
+        // Call the updated stored procedure that joins PHIM, HINH_THUC_CHIEU, NGON_NGU, and CONG_NGHE_CHIEU
         const query = 'CALL GetPhimCoHTCByFilmID(?)';
         const [rows] = await db.query(query, [MaP]);
 
@@ -55,7 +55,7 @@ const getPhimCoHTCByPhimID = async (req, res) => {
         res.status(200).send({
             success: true,
             message: "Phim Co HTC retrieved successfully",
-            data: rows,
+            data: rows,  // The rows will include film, HTC, language, and technology type names
         });
     } catch (err) {
         console.error(err);
@@ -66,6 +66,7 @@ const getPhimCoHTCByPhimID = async (req, res) => {
         });
     }
 };
+
 
 module.exports = {
     getPhimCoHTC,
