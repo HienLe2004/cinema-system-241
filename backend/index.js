@@ -30,6 +30,7 @@ app.use('/api/v1', require("./routes/ngonngu.Routes"))
 app.use('/api/v1', require("./routes/phimcohtc.Routes"))
 app.use('/api/v1', require("./routes/chinhanh.Routes"))
 app.use('/api/v1', require("./routes/phongchieu.Routes"))
+app.use('/api/v1', require("./routes/pcchieucnc.Routes"))
 
 
 

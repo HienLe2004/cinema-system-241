@@ -12,7 +12,7 @@ const router = express.Router();
 
 //________________ROUTES_________________
 router.get('/dao_dien', getDaoDien); // Fetch all directors
-router.get('/dao_dien/film/:id', getDaoDienByFilmID); // Fetch directors by film ID
+router.get('/dao_dien/:id', getDaoDienByFilmID); // Fetch directors by film ID
 router.post('/dao_dien', createDaoDien); // Create a new director for a film
 router.patch('/dao_dien/:id', updateDaoDienByFilmID); // Update a director's info by film ID
 router.delete('/dao_dien/:id', deleteDaoDienByFilmID); // Delete a director by film ID
