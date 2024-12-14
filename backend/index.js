@@ -24,6 +24,10 @@ app.use('/api/v1', require("./routes/phim.Routes"))
 app.use('/api/v1', require("./routes/daodien.Routes"))
 app.use('/api/v1', require("./routes/dienvien.Routes"))
 app.use('/api/v1', require("./routes/theloai.Routes"))
+app.use('/api/v1', require("./routes/congnghechieu.Routes"))
+app.use('/api/v1', require("./routes/hinhthuc.Routes"))
+app.use('/api/v1', require("./routes/ngonngu.Routes"))
+app.use('/api/v1', require("./routes/phimcohtc.Routes"))
 
 
 
