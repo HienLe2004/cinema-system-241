@@ -19,7 +19,7 @@ const MoviebyBranchs = () => {
       </footer>
       {/* Lót dưới cùng của trang */}
       <div className="bg-brown-500 text-center text-sm text-gray-400 p-4 font-bold">
-        &copy; 2024 Công ty Phim ABC. All rights reserved.
+      &copy; 2024 ASSIGNMENT2 - 241 - DATABASE.
       </div>
     </div>
   );

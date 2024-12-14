@@ -45,12 +45,12 @@ const getSuatChieuByMaP = async (req, res) => {
         // Extract the actual rows from the first element in the array
         const suatChieuData = rows[0];
 
-        if (!suatChieuData || suatChieuData.length === 0) {
-            return res.status(404).send({
-                success: false,
-                message: "Suat Chieu not found for the provided MaP",
-            });
-        }
+        // if (!suatChieuData || suatChieuData.length === 0) {
+        //     return res.status(404).send({
+        //         success: false,
+        //         message: "Suat Chieu not found for the provided MaP",
+        //     });
+        // }
 
         res.status(200).send({
             success: true,

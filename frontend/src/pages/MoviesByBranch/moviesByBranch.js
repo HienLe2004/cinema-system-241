@@ -16,7 +16,7 @@ const MoviesByBranch = () => {
 
   return (
     <div className="container mx-auto p-6">
-      <h2 className="text-2xl font-bold mb-4">Danh sách phim tại {branchId}</h2>
+      <h2 className="text-2xl font-bold mb-4">Danh sách phim tại chi nhánh {branchId}</h2>
       {filteredMovies.length > 0 ? (
         <ul>
           {filteredMovies.map(movie => (
