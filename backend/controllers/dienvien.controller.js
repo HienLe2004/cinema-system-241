@@ -26,25 +26,25 @@ const getDienVien = async (req, res) => {
 };
 
 
-// Get actors by film ID
-const getDienVienByFilmID = async (req, res) => {
+// Get actors by Phim ID
+const getDienVienByMaP = async (req, res) => {
     try {
-        const phimID = req.params.id;
-        if (!phimID) {
+        const MaP = req.params.id;
+        if (!MaP) {
             return res.status(400).send({
                 success: false,
-                message: "Missing or invalid film ID",
+                message: "Missing or invalid Phim ID",
             });
         }
 
-        // Call the stored procedure to get actors by film ID
-        const [rows] = await db.query('CALL GetDienVienByFilmID(?)', [phimID]);
+        // Call the stored procedure to get actors by Phim ID
+        const [rows] = await db.query('CALL GetDienVienByMaP(?)', [MaP]);
 
         // Check if any actors are found
         if (!rows || rows.length === 0) {
             return res.status(404).send({
                 success: false,
-                message: "No actors found for the specified film",
+                message: "No actors found for the specified Phim",
             });
         }
 
@@ -57,14 +57,14 @@ const getDienVienByFilmID = async (req, res) => {
         console.error(err);
         res.status(500).send({
             success: false,
-            message: "Error in getDienVienByFilmID API",
+            message: "Error in getDienVienByMaP API",
             error: err.message,
         });
     }
 };
 
 
-// Create a new actor for a film
+// Create a new actor for a Phim
 const createDienVien = async (req, res) => {
     try {
         const { MaP, VaiDien, Ten } = req.body;
@@ -75,12 +75,12 @@ const createDienVien = async (req, res) => {
             });
         }
 
-        // Check if the film exists
-        const checkFilm = await db.query('SELECT * FROM PHIM WHERE MaP = ?', [MaP]);
-        if (!checkFilm || checkFilm[0].length === 0) {
+        // Check if the Phim exists
+        const checkPhim = await db.query('SELECT * FROM PHIM WHERE MaP = ?', [MaP]);
+        if (!checkPhim || checkPhim[0].length === 0) {
             return res.status(404).send({
                 success: false,
-                message: "Film not found",
+                message: "Phim not found",
             });
         }
 
@@ -102,30 +102,30 @@ const createDienVien = async (req, res) => {
     }
 };
 
-// Update an actor's information by film ID
-const updateDienVienByFilmID = async (req, res) => {
+// Update an actor's information by Phim ID
+const updateDienVienByMaP = async (req, res) => {
     try {
-        const { MaP, VaiDien, Ten } = req.body;
-        const phimID = req.params.id;
+        const { id, VaiDien, Ten } = req.body;
+        const MaP = req.params.id;
 
-        if (!phimID || !MaP || !Ten) {
+        if (!MaP || !MaP || !Ten) {
             return res.status(400).send({
                 success: false,
-                message: "Missing film ID or fields to update",
+                message: "Missing Phim ID or fields to update",
             });
         }
 
         // Check if the actor exists
-        const checkActor = await db.query('SELECT * FROM DIEN_VIEN WHERE MaP = ? AND MaDienVien = ?', [phimID, MaP]);
+        const checkActor = await db.query('SELECT * FROM DIEN_VIEN WHERE MaP = ? AND MaDienVien = ?', [MaP, MaP]);
         if (!checkActor || checkActor[0].length === 0) {
             return res.status(404).send({
                 success: false,
-                message: "Actor not found for the specified film",
+                message: "Actor not found for the specified Phim",
             });
         }
 
         const query = 'UPDATE DIEN_VIEN SET VaiDien = COALESCE(?, VaiDien), Ten = COALESCE(?, Ten) WHERE MaP = ? AND MaDienVien = ?';
-        const [result] = await db.query(query, [VaiDien, Ten, phimID, MaP]);
+        const [result] = await db.query(query, [VaiDien, Ten, MaP, id]);
 
         if (result.affectedRows === 0) {
             return res.status(404).send({
@@ -148,21 +148,21 @@ const updateDienVienByFilmID = async (req, res) => {
     }
 };
 
-// Delete an actor by film ID
-const deleteDienVienByFilmID = async (req, res) => {
+// Delete an actor by Phim ID
+const deleteDienVienByMaP = async (req, res) => {
     try {
-        const phimID = req.params.id;
-        const { MaP } = req.body;
+        const MaP = req.params.id;
+        const { id } = req.body;
 
-        if (!phimID || !MaP) {
+        if (!MaP || !MaP) {
             return res.status(400).send({
                 success: false,
-                message: "Missing film ID or actor ID",
+                message: "Missing Phim ID or actor ID",
             });
         }
 
         const query = 'DELETE FROM DIEN_VIEN WHERE MaP = ? AND MaDienVien = ?';
-        const [result] = await db.query(query, [phimID, MaP]);
+        const [result] = await db.query(query, [MaP, id]);
 
         if (result.affectedRows === 0) {
             return res.status(404).send({
@@ -187,8 +187,8 @@ const deleteDienVienByFilmID = async (req, res) => {
 
 module.exports = {
     getDienVien,
-    getDienVienByFilmID,
+    getDienVienByMaP,
     createDienVien,
-    updateDienVienByFilmID,
-    deleteDienVienByFilmID,
+    updateDienVienByMaP,
+    deleteDienVienByMaP,
 };

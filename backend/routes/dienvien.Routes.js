@@ -1,10 +1,10 @@
 const express = require('express');
 const {
     getDienVien,
-    getDienVienByFilmID,
+    getDienVienByMaP,
     createDienVien,
-    updateDienVienByFilmID,
-    deleteDienVienByFilmID
+    updateDienVienByMaP,
+    deleteDienVienByMaP
 } = require('../controllers/dienvien.controller');
 
 //________________ROUTER_________________
@@ -12,9 +12,9 @@ const router = express.Router();
 
 //________________ROUTES_________________
 router.get('/dien_vien', getDienVien); // Fetch all actors
-router.get('/dien_vien/film/:id', getDienVienByFilmID); // Fetch actors by film ID
-router.post('/dien_vien', createDienVien); // Create a new actor for a film
-router.patch('/dien_vien/:id', updateDienVienByFilmID); // Update an actor's info by film ID
-router.delete('/dien_vien/:id', deleteDienVienByFilmID); // Delete an actor by film ID
+router.get('/dien_vien/:id', getDienVienByMaP); // Fetch actors by Phim ID
+router.post('/dien_vien', createDienVien); // Create a new actor for a Phim
+router.patch('/dien_vien/:id', updateDienVienByMaP); // Update an actor's info by Phim ID
+router.delete('/dien_vien/:id', deleteDienVienByMaP); // Delete an actor by Phim ID
 
 module.exports = router;

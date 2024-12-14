@@ -1,10 +1,10 @@
 const express = require('express');
 const {
     getDaoDien,
-    getDaoDienByFilmID,
+    getDaoDienByMaP,
     createDaoDien,
-    updateDaoDienByFilmID,
-    deleteDaoDienByFilmID
+    updateDaoDienByMaP,
+    deleteDaoDienByMaP
 } = require('../controllers/daodien.controller');
 
 //________________ROUTER_________________
@@ -12,9 +12,9 @@ const router = express.Router();
 
 //________________ROUTES_________________
 router.get('/dao_dien', getDaoDien); // Fetch all directors
-router.get('/dao_dien/film/:id', getDaoDienByFilmID); // Fetch directors by film ID
-router.post('/dao_dien', createDaoDien); // Create a new director for a film
-router.patch('/dao_dien/:id', updateDaoDienByFilmID); // Update a director's info by film ID
-router.delete('/dao_dien/:id', deleteDaoDienByFilmID); // Delete a director by film ID
+router.get('/dao_dien/:id', getDaoDienByMaP); // Fetch directors by Phim ID
+router.post('/dao_dien', createDaoDien); // Create a new director for a Phim
+router.patch('/dao_dien/:id', updateDaoDienByMaP); // Update a director's info by Phim ID
+router.delete('/dao_dien/:id', deleteDaoDienByMaP); // Delete a director by Phim ID
 
 module.exports = router;

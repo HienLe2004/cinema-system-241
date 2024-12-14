@@ -25,21 +25,21 @@ const getDaoDien = async (req, res) => {
     }
 };
 
-// Get a director by film ID using stored procedure
-const getDaoDienByFilmID = async (req, res) => {
+// Get a director by Phim ID using stored procedure
+const getDaoDienByMaP = async (req, res) => {
     try {
-        const phimID = req.params.id;
-        if (!phimID) {
+        const MaP = req.params.id;
+        if (!MaP) {
             return res.status(400).send({
                 success: false,
-                message: "Missing or invalid film ID",
+                message: "Missing or invalid Phim ID",
             });
         }
-        const data = await db.query('CALL GetDaoDienByFilmID(?)', [phimID]);
+        const data = await db.query('CALL GetDaoDienByMaP(?)', [MaP]);
         if (!data || data[0].length === 0) {
             return res.status(404).send({
                 success: false,
-                message: "Director not found for the specified film",
+                message: "Director not found for the specified Phim",
             });
         }
         res.status(200).send({
@@ -51,14 +51,14 @@ const getDaoDienByFilmID = async (req, res) => {
         console.error(err);
         res.status(500).send({
             success: false,
-            message: "Error in getDaoDienByFilmID API",
+            message: "Error in getDaoDienByMaP API",
             error: err.message,
         });
     }
 };
 
 
-// Create a new director for a film
+// Create a new director for a Phim
 const createDaoDien = async (req, res) => {
     try {
         const { MaP, Ten } = req.body;
@@ -69,12 +69,12 @@ const createDaoDien = async (req, res) => {
             });
         }
 
-        // Check if the film exists
-        const checkFilm = await db.query('SELECT * FROM PHIM WHERE MaP = ?', [MaP]);
-        if (!checkFilm || checkFilm[0].length === 0) {
+        // Check if the Phim exists
+        const checkPhim = await db.query('SELECT * FROM PHIM WHERE MaP = ?', [MaP]);
+        if (!checkPhim || checkPhim[0].length === 0) {
             return res.status(404).send({
                 success: false,
-                message: "Film not found",
+                message: "Phim not found",
             });
         }
 
@@ -96,30 +96,30 @@ const createDaoDien = async (req, res) => {
     }
 };
 
-// Update a director's information by film ID
-const updateDaoDienByFilmID = async (req, res) => {
+// Update a director's information by Phim ID
+const updateDaoDienByMaP = async (req, res) => {
     try {
-        const { MaP, Ten } = req.body;
-        const phimID = req.params.id;
+        const { id, Ten } = req.body;
+        const MaP = req.params.id;
 
-        if (!phimID || !MaP || !Ten) {
+        if (!id || !MaP || !Ten) {
             return res.status(400).send({
                 success: false,
-                message: "Missing film ID or fields to update",
+                message: "Missing Phim ID or fields to update",
             });
         }
 
         // Check if the director exists
-        const checkDirector = await db.query('SELECT * FROM DAO_DIEN WHERE MaP = ? AND MaDaoDien = ?', [phimID, MaP]);
+        const checkDirector = await db.query('SELECT * FROM DAO_DIEN WHERE MaP = ? AND MaDaoDien = ?', [MaP, id]);
         if (!checkDirector || checkDirector[0].length === 0) {
             return res.status(404).send({
                 success: false,
-                message: "Director not found for the specified film",
+                message: "Director not found for the specified Phim",
             });
         }
 
         const query = 'UPDATE DAO_DIEN SET Ten = COALESCE(?, Ten) WHERE MaP = ? AND MaDaoDien = ?';
-        const [result] = await db.query(query, [Ten, phimID, MaP]);
+        const [result] = await db.query(query, [Ten, MaP, id]);
 
         if (result.affectedRows === 0) {
             return res.status(404).send({
@@ -142,21 +142,21 @@ const updateDaoDienByFilmID = async (req, res) => {
     }
 };
 
-// Delete a director by film ID
-const deleteDaoDienByFilmID = async (req, res) => {
+// Delete a director by Phim ID
+const deleteDaoDienByMaP = async (req, res) => {
     try {
-        const phimID = req.params.id;
-        const { MaP } = req.body;
+        const MaP = req.params.id;
+        const { id } = req.body;
 
-        if (!phimID || !MaP) {
+        if (!MaP || !MaP) {
             return res.status(400).send({
                 success: false,
-                message: "Missing film ID or director ID",
+                message: "Missing Phim ID or director ID",
             });
         }
 
         const query = 'DELETE FROM DAO_DIEN WHERE MaP = ? AND MaDaoDien = ?';
-        const [result] = await db.query(query, [phimID, MaP]);
+        const [result] = await db.query(query, [MaP, id]);
 
         if (result.affectedRows === 0) {
             return res.status(404).send({
@@ -181,8 +181,8 @@ const deleteDaoDienByFilmID = async (req, res) => {
 
 module.exports = {
     getDaoDien,
-    getDaoDienByFilmID,
+    getDaoDienByMaP,
     createDaoDien,
-    updateDaoDienByFilmID,
-    deleteDaoDienByFilmID,
+    updateDaoDienByMaP,
+    deleteDaoDienByMaP,
 };

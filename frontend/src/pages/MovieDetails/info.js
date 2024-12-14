@@ -127,9 +127,10 @@
 
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { getTheLoaiByFilmID } from '../../api/theloai.api';
-import { getDaoDienByFilmID } from '../../api/daodien.api';
-import { getDienVienByFilmID } from '../../api/dienvien.api';
+import { getTheLoaiByPhimID } from '../../api/theloai.api';
+import { getDaoDienByPhimID } from '../../api/daodien.api';
+import { getDienVienByPhimID } from '../../api/dienvien.api';
+import { getPhimCoHTCByMaP } from '../../api/phim_co_htc';
 
 const MovieDetail = () => {
   const location = useLocation();
@@ -137,6 +138,7 @@ const MovieDetail = () => {
   const [theLoai, setTheLoai] = useState([]);
   const [daoDien, setDaodien] = useState([]);
   const [dienVien, setDienVien] = useState([]);
+  const [hinhThucChieu, setHinhThucChieu] = useState([]);
   const [selectedShowtime, setSelectedShowtime] = useState(null);
   const navigate = useNavigate();
 
@@ -166,21 +168,25 @@ const MovieDetail = () => {
   // }, {});
   useEffect(()=>{
     const fetchTheLoaiPhim = async () => {
-      const {data} = await getTheLoaiByFilmID(movie.MaP)
+      const {data} = await getTheLoaiByPhimID(movie.MaP)
       setTheLoai(data.data[0].map(one => one.TenTheLoai))
     }
     const fetchDaoDienPhim = async () => {
-      const {data} = await getDaoDienByFilmID(movie.MaP)
+      const {data} = await getDaoDienByPhimID(movie.MaP)
       setDaodien(data.data[0].map(one => one.Ten))
     }
     const fetchDienVienPhim = async () => {
-      const {data} = await getDienVienByFilmID(movie.MaP)
-      console.log(data)
+      const {data} = await getDienVienByPhimID(movie.MaP)
       setDienVien(data.data.map(one => (one.Ten + ` (${one.VaiDien})`)))
+    }
+    const fetchHinhThucChieuPhim = async () => {
+      const {data} = await getPhimCoHTCByMaP(movie.MaP)
+      setHinhThucChieu(data.data[0].map(one => (`${one.LoaiCongNgheChieu} ${one.LoaiPhienDich} ${one.TenNgonNgu}`)));
     }
     fetchTheLoaiPhim()
     fetchDaoDienPhim()
     fetchDienVienPhim()
+    fetchHinhThucChieuPhim()
   },[])
 
   return (
@@ -197,6 +203,12 @@ const MovieDetail = () => {
           <p className="text-gray-900"><strong>Mô tả:</strong> {movie.MoTa}</p>
           <p className="text-gray-900"><strong>Đạo diễn:</strong> {daoDien.join(", ")}</p>
           <p className="text-gray-900"><strong>Diễn viên:</strong> {dienVien.join(", ")}</p>
+          <p className="text-gray-900"><strong>Trailer: </strong>
+            <a href={movie.Trailer}>
+              Link
+            </a>
+          </p>
+          <p className="text-gray-900"><strong>Hình thức chiếu:</strong> {hinhThucChieu.join(", ")}</p>
         </div>
       </div>
 

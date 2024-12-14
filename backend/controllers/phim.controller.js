@@ -4,19 +4,19 @@ const db = require("../config/db");
 const validGioiHanDoTuoi = ['0', '13', '16', '18'];
 const validNhan = ['P', 'K', 'T13', 'T16', 'T18', 'C'];
 
-// Get all films
+// Get all Phims
 const getPhim = async (req, res) => {
     try {
-        const data = await db.query('CALL GetAllFilms()');
+        const data = await db.query('CALL GetAllPhim()');
         if (!data || data[0].length === 0) {
             return res.status(404).send({
                 success: false,
-                message: "No films found",
+                message: "No Phims found",
             });
         }
         res.status(200).send({
             success: true,
-            message: "All films retrieved successfully",
+            message: "All Phims retrieved successfully",
             data: data[0],
         });
     } catch (err) {
@@ -29,32 +29,32 @@ const getPhim = async (req, res) => {
     }
 };
 
-// Get a film by ID
+// Get a Phim by ID
 const getPhimByID = async (req, res) => {
     try {
         const phimID = req.params.id;
         if (!phimID) {
             return res.status(400).send({
                 success: false,
-                message: "Missing or invalid film ID",
+                message: "Missing or invalid Phim ID",
             });
         }
 
-        // Calling the stored procedure 'getFilmByID' and passing the phimID as parameter
-        const query = 'CALL getFilmByID(?)';
+        // Calling the stored procedure 'getPhimByID' and passing the phimID as parameter
+        const query = 'CALL getPhimByID(?)';
         const data = await db.query(query, [phimID]);
 
         // Assuming the stored procedure returns the result as data[0]
         if (!data || data[0].length === 0) {
             return res.status(404).send({
                 success: false,
-                message: "Film not found",
+                message: "Phim not found",
             });
         }
 
         res.status(200).send({
             success: true,
-            message: "Film retrieved successfully",
+            message: "Phim retrieved successfully",
             data: data[0],
         });
     } catch (err) {
@@ -68,7 +68,7 @@ const getPhimByID = async (req, res) => {
 };
 
 
-// Create a new film
+// Create a new Phim
 const createPhim = async (req, res) => {
     try {
         const { NSX, ThoiLuong, Poster, NgayKC, Ten, MoTa, Trailer, GioiHanDoTuoi, GiaGoc, Nhan } = req.body;
@@ -96,7 +96,7 @@ const createPhim = async (req, res) => {
 
         // Cập nhật câu lệnh gọi với số lượng tham số đúng (10 IN và 1 OUT)
         const query = `
-            CALL CreateFilm(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, @phimID)
+            CALL CreatePhim(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, @phimID)
         `;
         
         // Thực hiện câu lệnh SQL để chèn phim
@@ -107,7 +107,7 @@ const createPhim = async (req, res) => {
 
         res.status(201).send({
             success: true,
-            message: "Film created successfully",
+            message: "Phim created successfully",
             id: result[0].phimID,  // Trả về ID từ stored procedure
         });
     } catch (err) {
@@ -121,7 +121,7 @@ const createPhim = async (req, res) => {
 };
 
 
-// Update a film by ID
+// Update a Phim by ID
 const updatePhimByID = async (req, res) => {
     try {
         const phimID = req.params.id;
@@ -130,7 +130,7 @@ const updatePhimByID = async (req, res) => {
         if (!phimID) {
             return res.status(400).send({
                 success: false,
-                message: "Missing film ID",
+                message: "Missing Phim ID",
             });
         }
 
@@ -148,9 +148,9 @@ const updatePhimByID = async (req, res) => {
             });
         }
 
-        // Prepare query to update film by ID using stored procedure
+        // Prepare query to update Phim by ID using stored procedure
         const query = `
-            CALL UpdateFilmByID(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            CALL UpdatePhimByID(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `;
         const [result] = await db.query(query, [
             phimID, // Make sure phimID is the first argument
@@ -169,13 +169,13 @@ const updatePhimByID = async (req, res) => {
         if (result.affectedRows === 0) {
             return res.status(404).send({
                 success: false,
-                message: "Film not found or no changes made",
+                message: "Phim not found or no changes made",
             });
         }
 
         res.status(200).send({
             success: true,
-            message: "Film updated successfully",
+            message: "Phim updated successfully",
         });
     } catch (err) {
         console.error(err);
@@ -188,14 +188,14 @@ const updatePhimByID = async (req, res) => {
 };
 
 
-// Delete a film by ID
+// Delete a Phim by ID
 const deletePhimByID = async (req, res) => {
     try {
         const phimID = req.params.id;
         if (!phimID) {
             return res.status(400).send({
                 success: false,
-                message: "Missing film ID",
+                message: "Missing Phim ID",
             });
         }
 
@@ -206,7 +206,7 @@ const deletePhimByID = async (req, res) => {
         if (result.affectedRows === 0) {
             return res.status(404).send({
                 success: false,
-                message: "Film not found",
+                message: "Phim not found",
             });
         }
 
@@ -215,7 +215,7 @@ const deletePhimByID = async (req, res) => {
 
         res.status(200).send({
             success: true,
-            message: "Film deleted successfully",
+            message: "Phim deleted successfully",
         });
     } catch (err) {
         console.error(err);

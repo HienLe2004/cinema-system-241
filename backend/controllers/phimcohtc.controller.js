@@ -31,7 +31,7 @@ const getPhimCoHTC = async (req, res) => {
 
 
 // Get PhimCoHTC by MaP
-const getPhimCoHTCByPhimID = async (req, res) => {
+const getPhimCoHTCByMaP = async (req, res) => {
     try {
         const { MaP } = req.params;
         if (!MaP) {
@@ -42,7 +42,7 @@ const getPhimCoHTCByPhimID = async (req, res) => {
         }
 
         // Call the updated stored procedure that joins PHIM, HINH_THUC_CHIEU, NGON_NGU, and CONG_NGHE_CHIEU
-        const query = 'CALL GetPhimCoHTCByFilmID(?)';
+        const query = 'CALL GetPhimCoHTCByMaP(?)';
         const [rows] = await db.query(query, [MaP]);
 
         if (!rows || rows.length === 0) {
@@ -70,5 +70,5 @@ const getPhimCoHTCByPhimID = async (req, res) => {
 
 module.exports = {
     getPhimCoHTC,
-    getPhimCoHTCByPhimID,
+    getPhimCoHTCByMaP,
 };
