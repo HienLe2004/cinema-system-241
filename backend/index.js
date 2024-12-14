@@ -24,6 +24,7 @@ app.use('/api/v1', require("./routes/congnghechieu.Routes"))
 app.use('/api/v1', require("./routes/hinhthuc.Routes"))
 app.use('/api/v1', require("./routes/ngonngu.Routes"))
 app.use('/api/v1', require("./routes/phimcohtc.Routes"))
+app.use('/api/v1', require("./routes/chinhanh.Routes"))
 
 
 
