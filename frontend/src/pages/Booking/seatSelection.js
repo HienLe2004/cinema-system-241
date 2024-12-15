@@ -2,6 +2,7 @@ import { format, parse } from "date-fns";
 import React, { useState, useRef, useEffect } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { getGheByMaPCAndMaCN } from "../../api/ghe.api";
+import { getGheDaDatByMaPCAndMaCN } from "../../api/getdadatcuasc";
 
 const Selection = () => {
   const { id } = useParams(); // Lấy ID từ URL
@@ -10,15 +11,15 @@ const Selection = () => {
   const [maxX, setMaxX] = useState(0);
   const [maxY, setMaxY] = useState(0);
   const [ghe, setGhe] = useState([]);
+  const [gheDaDat, setGheDaDat] = useState([]);
   const [selectedSeats, setSelectedSeats] = useState([]); // Ghế đã chọn
-  const bookedSeats = ["B5", "H7", "I8", "J9", "R2"]; // Các ghế đã đặt sẵn
 
   const seatRefs = useRef({});
   const navigate = useNavigate();
 
   // Xử lý khi nhấn chọn ghế
   const handleSeatClick = (seat) => {
-    if (bookedSeats.includes(seat)) return; // Không chọn được ghế đã đặt
+    if (gheDaDat.some(one => seat == one.MaG)) return; // Không chọn được ghế đã đặt
     setSelectedSeats(
       (prevSelectedSeats) =>
         prevSelectedSeats.includes(seat)
@@ -29,7 +30,7 @@ const Selection = () => {
 
   // Lấy lớp CSS của từng ghế
   const getSeatClass = (item) => {
-    if (bookedSeats.includes(item.MaG)) return "bg-red-500 cursor-not-allowed"; // Ghế đã đặt
+    if (gheDaDat.some(one => item.MaG === one.MaG)) return "bg-red-500 cursor-not-allowed"; // Ghế đã đặt
     if (selectedSeats.includes(item.MaG)) return "bg-blue-500"; // Ghế đang chọn
     if (item.LoaiGhe == "VIP") 
       return "bg-yellow-400 hover:bg-blue-300"; // Ghế VIP
@@ -61,7 +62,12 @@ const Selection = () => {
         setMaxY(Math.max(one.ToaDoY, maxY))
       })
     }
+    const fetchGheDaDat = async () => {
+      const {data} = await getGheDaDatByMaPCAndMaCN(suatChieu.MaSC, suatChieu.MaPC, suatChieu.MaCN)
+      setGheDaDat(data.data)
+    }
     fetchGhe()
+    fetchGheDaDat()
   },[])
   return (
     <div className="p-12">

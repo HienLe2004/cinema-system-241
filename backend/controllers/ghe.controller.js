@@ -44,7 +44,6 @@ const getGheByMaPCAndMaCN = async (req, res) => {
         });
     }
 };
-
 module.exports = {
     getGheByMaPCAndMaCN,
 };

@@ -2,6 +2,7 @@ import { format, parse } from "date-fns";
 import React, { useEffect, useState } from "react";
 import { useParams, useLocation } from "react-router-dom";
 import { getPhimByID } from "../../api/phim.api";
+import { createVe } from "../../api/ve.api";
 
 const Ticket = () => {
   const { id } = useParams(); // Lấy ID từ URL
@@ -22,8 +23,26 @@ const Ticket = () => {
     }
     fetchPhim()
   },[])
-  const handleFinish = () => {
-    alert("Đặt vé hoàn tất!");
+  const handleFinish = async () => {
+    let danhSachGhe = []
+    for (let ghe of cacGheDaChon) {
+      danhSachGhe.push(ghe.MaG)
+    }
+    console.log(danhSachGhe)
+    const {data} = await createVe({
+      PhuongThucThanhToan: "Momo",
+      TrangThaiThanhToan: true,
+      GiaVe: tongTien,
+      MaHD: null,
+      MaKH: null,
+      MaSC: suatChieu.MaSC,
+      MaPC: suatChieu.MaPC,
+      MaCN: suatChieu.MaCN,
+      MaNV: null,
+      DanhSachGhe: danhSachGhe
+    })
+    alert("Mã vé của bạn là: " + data.id)
+
     // Có thể thêm logic khác khi đặt vé hoàn tất, như điều hướng về trang chính
   };
   return (
