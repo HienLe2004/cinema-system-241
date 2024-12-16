@@ -20,12 +20,12 @@ import {
   EditOutlined,
   DeleteOutlined,
   PlusOutlined,
+  UploadOutlined,
 } from "@ant-design/icons";
-import moment from "moment";
-import { useUser } from "../../api/usercontext"; // Nhập useUser
+import { render } from "@testing-library/react";
+import moment from "moment/moment";
 
 const CrudPhim = () => {
-  const { isAdmin } = useUser(); // Lấy trạng thái isAdmin
   const [phimList, setPhimList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [currentPhim, setCurrentPhim] = useState(null);
@@ -89,7 +89,19 @@ const CrudPhim = () => {
           description: "Cập nhật phim thành công!",
         });
       } else {
-        await createPhim(formData);
+        const createData = {
+          NSX: values?.daoDien,
+          ThoiLuong: values?.thoiGian,
+          Poster: values?.poster,
+          NgayKC: values?.ngayKhoiChieu?.format(),
+          Ten: values?.title,
+          MoTa: values?.moTa,
+          Trailer: values?.trailer,
+          GioiHanDoTuoi: values?.gioiHanDoTuoi?.toString(),
+          GiaGoc: values?.giaGoc,
+          Nhan: values?.nhan,
+        };
+        await createPhim(createData);
         notification.success({
           message: "Thành công",
           description: "Thêm phim thành công!",
@@ -152,6 +164,11 @@ const CrudPhim = () => {
       key: "ThoiLuong",
     },
     {
+      title: "Thể loại",
+      dataIndex: "theLoai",
+      key: "theLoai",
+    },
+    {
       title: "Mô tả",
       dataIndex: "MoTa",
       key: "MoTa",
@@ -162,11 +179,16 @@ const CrudPhim = () => {
       key: "daoDien",
     },
     {
+      title: "Diễn viên",
+      dataIndex: "dienVien",
+      key: "dienVien",
+    },
+    {
       title: "Poster",
       dataIndex: "Poster",
       key: "Poster",
       render: (_, record) => {
-        return record?.Poster ? <img src={record?.Poster} alt="Poster" style={{ width: 100 }} /> : null;
+        return record?.Poster ? <img src={record?.Poster} /> : null;
       },
     },
     {
@@ -180,6 +202,11 @@ const CrudPhim = () => {
       },
     },
     {
+      title: "Giới hạn độ tuổi",
+      dataIndex: "GioiHanDoTuoi",
+      key: "GioiHanDoTuoi",
+    },
+    {
       title: "Giá gốc",
       dataIndex: "GiaGoc",
       key: "GiaGoc",
@@ -188,6 +215,16 @@ const CrudPhim = () => {
           <div>{new Intl.NumberFormat().format(record.GiaGoc)}đ</div>
         ) : null;
       },
+    },
+    {
+      title: "Trailer",
+      dataIndex: "Trailer",
+      key: "Trailer",
+      render: (_, record) => (
+        <a href={record?.Trailer} target="_blank" className="text-blue-500 underline">
+          Xem Trailer
+        </a>
+      ),
     },
     {
       title: "Hành động",
@@ -202,7 +239,7 @@ const CrudPhim = () => {
           />
           <Button
             icon={<DeleteOutlined />}
-            onClick={() => handleDelete(record?.id)}
+            onClick={() => handleDelete(record?.MaP)}
             danger
             className="hover:bg-red-600"
           />
@@ -212,17 +249,13 @@ const CrudPhim = () => {
   ];
 
   // Giao diện người dùng
-  if (!isAdmin) {
-    return <div>Bạn không có quyền truy cập trang này.</div>; // Hoặc điều hướng đến trang khác
-  }
-
   return (
     <div className="container mx-auto p-4">
       <Button
         type="primary"
         icon={<PlusOutlined />}
         onClick={() => showModal()}
-        className="mb-4"
+        className="mb-4 bg-green-600 hover:bg-green-700"
       >
         Thêm Phim
       </Button>
@@ -252,16 +285,45 @@ const CrudPhim = () => {
           <Form.Item
             name="nhan"
             label="Nhãn"
-            rules={[{ required: true, message: "Vui lòng nhập nhãn!" }]}
+            rules={[
+              { required: true, message: "Vui lòng nhập nhãn!" },
+              {
+                validator: (_, value) => {
+                  if (
+                    value &&
+                    !["P", "K", "T13", "T16", "T18", "C"].includes(
+                      value?.toString()
+                    )
+                  ) {
+                    return Promise.reject(
+                      "Nhãn phải thuộc 'P', 'K', 'T13', 'T16', 'T18', 'C'"
+                    );
+                  }
+                  return Promise.resolve();
+                },
+              },
+            ]}
           >
             <Input className="border border-gray-300 rounded-lg" />
           </Form.Item>
           <Form.Item
             name="thoiGian"
             label="Thời gian"
-            rules={[{ required: true, message: "Vui lòng nhập thời gian phim!" }]}
+            rules={[
+              { required: true, message: "Vui lòng nhập thời gian phim!" },
+            ]}
           >
-            <Input type="number" className="border border-gray-300 rounded-lg" />
+            <Input
+              type="number"
+              className="border border-gray-300 rounded-lg"
+            />
+          </Form.Item>
+          <Form.Item
+            name="theLoai"
+            label="Thể loại"
+            rules={[{ required: true, message: "Vui lòng nhập thể loại!" }]}
+          >
+            <Input className="border border-gray-300 rounded-lg" />
           </Form.Item>
           <Form.Item
             name="moTa"
@@ -278,11 +340,47 @@ const CrudPhim = () => {
             <Input className="border border-gray-300 rounded-lg" />
           </Form.Item>
           <Form.Item
-            name="ngayKhoiChieu"
+            name="dienVien"
+            label="Diễn viên"
+            rules={[{ required: true, message: "Vui lòng nhập diễn viên!" }]}
+          >
+            <Input className="border border-gray-300 rounded-lg" />
+          </Form.Item>
+          <Form.Item
+            label="Poster"
+            name="poster"
+            rules={[{ required: true, message: "Vui lòng nhập poster" }]}
+          >
+            <Input className="border border-gray-300 rounded-lg" />
+          </Form.Item>
+          <Form.Item
             label="Ngày khởi chiếu"
-            rules={[{ required: true, message: "Vui lòng chọn ngày khởi chiếu!" }]}
+            name="ngayKhoiChieu"
+            rules={[{ required: true, message: "Vui lòng nhập giá trị" }]}
           >
             <DatePicker className="w-full border border-gray-300 rounded-lg" />
+          </Form.Item>
+          <Form.Item
+            label="Giới hạn độ tuổi"
+            name="gioiHanDoTuoi"
+            rules={[
+              { required: true, message: "Vui lòng nhập giá trị" },
+              {
+                validator: (_, value) => {
+                  if (
+                    value &&
+                    !["0", "13", "16", "18"].includes(value?.toString())
+                  ) {
+                    return Promise.reject(
+                      "Tuổi phải thuộc '0', '13', '16', '18'"
+                    );
+                  }
+                  return Promise.resolve();
+                },
+              },
+            ]}
+          >
+            <Input className="border border-gray-300 rounded-lg" />
           </Form.Item>
           <Form.Item
             label="Giá gốc"
@@ -290,6 +388,13 @@ const CrudPhim = () => {
             rules={[{ required: true, message: "Vui lòng nhập giá gốc" }]}
           >
             <InputNumber className="w-full border border-gray-300 rounded-lg" />
+          </Form.Item>
+          <Form.Item
+            name="trailer"
+            label="Trailer"
+            rules={[{ required: true, message: "Vui lòng nhập link trailer!" }]}
+          >
+            <Input className="border border-gray-300 rounded-lg" />
           </Form.Item>
         </Form>
       </Modal>

@@ -9,7 +9,7 @@ function Login() {
   const { loginAsAdmin } = useUser(); // Lấy hàm login từ context
 
   const onFinish = (values) => {
-    if (values.name === "admin" && values.password === "123456789") {
+    if (values.name === "admin" && values.password === "1234") {
       loginAsAdmin(); // Đặt trạng thái admin
       navigate("/ad-crud-movie");
     } else {
