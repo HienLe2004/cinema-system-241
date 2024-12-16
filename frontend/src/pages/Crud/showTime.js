@@ -1,8 +1,8 @@
 import React from 'react';
 import HomeMenu from '../Home/HomeMenu'; // Thanh menu
-import CrudPhim from './crudMovie';
+import CrudShowTime from './crudShowTime';
 import Footer from '../Home/Footer';// Footer
-const Crud = () => {
+const Crud_Show_Time = () => {
   return (
     <div className="flex flex-col min-h-screen bg-brown-100">
       {/* Header */}
@@ -11,7 +11,7 @@ const Crud = () => {
       </header>
       {/* Nội dung chính */}
       <main className="flex-grow">
-        <CrudPhim />
+        <CrudShowTime />
       </main>
       {/* Footer */}
       <footer>
@@ -25,4 +25,4 @@ const Crud = () => {
   );
 };
 
-export default Crud;
+export default Crud_Show_Time;

@@ -7,13 +7,12 @@ import {
   FieldTimeOutlined,
 } from "@ant-design/icons";
 import { Link } from "react-router-dom";
-
 const Footer = () => {
   return (
-    <div className="text-white bg-Lime-50 py-6 mt-8 border border-black">
+    <div className="text-white bg-Lime-50 py-6 mt-8 border-gray-600">
       <div className="container mx-auto flex justify-between items-start flex-wrap text-left ">
         {/* Block 1: Điều khoản dịch vụ */}
-        <div className="flex-1">
+        <div className="flex-1 ml-48">
           <p className="font-semibold mb-2 font-bold">Điều khoản dịch vụ</p>
           <div className="space-y-2 pl-4">
             <p>

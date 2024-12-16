@@ -103,7 +103,7 @@ const MovieDetail = () => {
           <p className="text-gray-900"><strong>Đạo diễn:</strong> {daoDien.join(", ")}</p>
           <p className="text-gray-900"><strong>Diễn viên:</strong> {dienVien.join(", ")}</p>
           <p className="text-gray-900"><strong>Trailer: </strong>
-            <a href={movie.Trailer}>
+            <a href={movie.Trailer} target="_blank" rel="noopener noreferrer">
               Link
             </a>
           </p>

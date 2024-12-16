@@ -3,8 +3,10 @@ import React, { useEffect, useState } from "react";
 import { useParams, useLocation } from "react-router-dom";
 import { getPhimByID } from "../../api/phim.api";
 import { createVe } from "../../api/ve.api";
-
+import HomeMenu from "../Home/HomeMenu";
+import Footer from "../Home/Footer";
 const Ticket = () => {
+  <HomeMenu />
   const { id } = useParams(); // Lấy ID từ URL
   const location = useLocation();
   const { cacGheDaChon, suatChieu } = location.state || {};
@@ -72,6 +74,8 @@ const Ticket = () => {
       </div>
     </div>
   );
+  <Footer />
+  
 };
 
 export default Ticket;
