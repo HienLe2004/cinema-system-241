@@ -1,5 +1,5 @@
 import React from 'react';
-import HomeMenu from '../Home/HomeMenu'; // Thanh menu
+import MenuBar from './menu' // Thanh menu
 import CrudPhim from './crudMovie';
 import Footer from '../Home/Footer';// Footer
 const Crud_Movie = () => {
@@ -7,7 +7,7 @@ const Crud_Movie = () => {
     <div className="flex flex-col min-h-screen bg-brown-100">
       {/* Header */}
       <header>
-        <HomeMenu />
+        <MenuBar />
       </header>
       {/* Nội dung chính */}
       <main className="flex-grow">

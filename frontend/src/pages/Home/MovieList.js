@@ -59,7 +59,7 @@ const MovieList = () => {
   },[currnentIndex])
   return (
     <div className="py-10 px-4 ">
-      <h2 className="m-auto w-7/12 text-2xl font-bold text-center mb-6 p-3 bg-gray-100  border-gray-950 rounded-xl">Danh sách phim</h2>
+      <h2 className="m-auto w-7/12 text-2xl font-bold text-center mb-6 p-3 bg-gray-300 rounded-xl">Danh sách phim</h2>
       <div className="relative">
         {/* Nút mũi tên trái */}
         <button

@@ -25,8 +25,8 @@ function App() {
           <Route path="/movie/:id" element={<MovieDetails />} />
           <Route path="/ticket/:id" element={<Ticket />} />
           <Route path="/moviesbybranch/:branchId" element={<MoviebyBranchs />} />
-          <Route path="/crud-phim" element={<Crud_Movie />} />
-          <Route path="/crud-show-time" element={<Crud_Show_Time />} />
+          <Route path="/ad-crud-movie" element={<Crud_Movie />} />
+          <Route path="/ad-crud-show-time" element={<Crud_Show_Time />} />
           <Route path="/search" element={<Search />} />
         </Routes>
       </BrowserRouter>

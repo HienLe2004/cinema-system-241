@@ -1,5 +1,5 @@
 import React from 'react';
-import HomeMenu from '../Home/HomeMenu'; // Thanh menu
+import MenuBar from './menu' // Thanh menu
 import CrudShowTime from './crudShowTime';
 import Footer from '../Home/Footer';// Footer
 const Crud_Show_Time = () => {
@@ -7,7 +7,7 @@ const Crud_Show_Time = () => {
     <div className="flex flex-col min-h-screen bg-brown-100">
       {/* Header */}
       <header>
-        <HomeMenu />
+        <MenuBar />
       </header>
       {/* Nội dung chính */}
       <main className="flex-grow">

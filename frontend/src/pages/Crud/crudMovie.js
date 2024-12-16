@@ -1,9 +1,31 @@
-import React, { useState, useEffect } from 'react';
-import { Table, Button, Modal, Input, Form, notification, Upload, DatePicker, InputNumber } from 'antd';
-import { getAllPhim, createPhim, updatePhimByID, deletePhimByID } from '../../api/phim.api';
-import { EditOutlined, DeleteOutlined, PlusOutlined, UploadOutlined } from '@ant-design/icons';
+import React, { useState, useEffect } from "react";
+import {
+  Table,
+  Button,
+  Modal,
+  Input,
+  Form,
+  notification,
+  Upload,
+  DatePicker,
+  InputNumber,
+} from "antd";
+import {
+  getAllPhim,
+  createPhim,
+  updatePhimByID,
+  deletePhimByID,
+} from "../../api/phim.api";
+import {
+  EditOutlined,
+  DeleteOutlined,
+  PlusOutlined,
+} from "@ant-design/icons";
+import moment from "moment";
+import { useUser } from "../../api/usercontext"; // Nhập useUser
 
 const CrudPhim = () => {
+  const { isAdmin } = useUser(); // Lấy trạng thái isAdmin
   const [phimList, setPhimList] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [currentPhim, setCurrentPhim] = useState(null);
@@ -14,10 +36,12 @@ const CrudPhim = () => {
   const fetchPhimList = async () => {
     try {
       const response = await getAllPhim();
-      const phimData = Array.isArray(response?.data?.data?.[0]) ? response?.data?.data?.[0] : [];
+      const phimData = Array.isArray(response?.data?.data?.[0])
+        ? response?.data?.data?.[0]
+        : [];
       setPhimList(phimData); // Cập nhật danh sách phim
     } catch (error) {
-      console.error('Lỗi khi tải danh sách phim:', error);
+      console.error("Lỗi khi tải danh sách phim:", error);
     }
   };
 
@@ -55,50 +79,53 @@ const CrudPhim = () => {
       }
 
       if (posterFile.length > 0) {
-        formData.append('poster', posterFile[0].originFileObj); // Thêm file poster
+        formData.append("poster", posterFile[0].originFileObj); // Thêm file poster
       }
 
       if (currentPhim) {
         await updatePhimByID(currentPhim.id, formData);
-        notification.success({ message: 'Thành công', description: 'Cập nhật phim thành công!' });
+        notification.success({
+          message: "Thành công",
+          description: "Cập nhật phim thành công!",
+        });
       } else {
-        const createData = {
-          NSX: values?.daoDien, 
-          ThoiLuong: values?.thoiGian, 
-          Poster: values?.poster, 
-          NgayKC: values?.ngayKhoiChieu?.format(), 
-          Ten: values?.title, 
-          MoTa: values?.moTa, 
-          Trailer: values?.trailer, 
-          GioiHanDoTuoi: values?.gioiHanDoTuoi?.toString(), 
-          GiaGoc: values?.giaGoc, 
-          Nhan: values?.nhan
-        }
-        await createPhim(createData);
-        notification.success({ message: 'Thành công', description: 'Thêm phim thành công!' });
+        await createPhim(formData);
+        notification.success({
+          message: "Thành công",
+          description: "Thêm phim thành công!",
+        });
       }
 
       setIsModalVisible(false);
       setCurrentPhim(null);
       fetchPhimList(); // Tải lại danh sách phim
     } catch (error) {
-      console.error('Lỗi khi lưu phim:', error);
-      notification.error({ message: 'Lỗi', description: 'Không thể lưu phim!' });
+      console.error("Lỗi khi lưu phim:", error);
+      notification.error({
+        message: "Lỗi",
+        description: "Không thể lưu phim!",
+      });
     }
   };
 
   // Xóa phim
   const handleDelete = async (id) => {
-    const confirmDelete = window.confirm('Bạn có chắc chắn muốn xóa phim này?');
+    const confirmDelete = window.confirm("Bạn có chắc chắn muốn xóa phim này?");
     if (!confirmDelete) return;
 
     try {
       await deletePhimByID(id);
-      notification.success({ message: 'Thành công', description: 'Xóa phim thành công!' });
+      notification.success({
+        message: "Thành công",
+        description: "Xóa phim thành công!",
+      });
       fetchPhimList(); // Tải lại danh sách phim
     } catch (error) {
-      console.error('Lỗi khi xóa phim:', error);
-      notification.error({ message: 'Lỗi', description: 'Không thể xóa phim!' });
+      console.error("Lỗi khi xóa phim:", error);
+      notification.error({
+        message: "Lỗi",
+        description: "Không thể xóa phim!",
+      });
     }
   };
 
@@ -110,69 +137,61 @@ const CrudPhim = () => {
   // Cấu hình các cột cho bảng
   const columns = [
     {
-      title: 'Tên Phim',
-      dataIndex: 'Ten',
-      key: 'Ten',
+      title: "Tên Phim",
+      dataIndex: "Ten",
+      key: "Ten",
     },
     {
-      title: 'Nhãn',
-      dataIndex: 'Nhan',
-      key: 'Nhan',
+      title: "Nhãn",
+      dataIndex: "Nhan",
+      key: "Nhan",
     },
     {
-      title: 'Thời gian',
-      dataIndex: 'ThoiLuong',
-      key: 'ThoiLuong',
+      title: "Thời gian",
+      dataIndex: "ThoiLuong",
+      key: "ThoiLuong",
     },
     {
-      title: 'Thể loại',
-      dataIndex: 'theLoai',
-      key: 'theLoai',
+      title: "Mô tả",
+      dataIndex: "MoTa",
+      key: "MoTa",
     },
     {
-      title: 'Mô tả',
-      dataIndex: 'MoTa',
-      key: 'MoTa',
+      title: "Đạo diễn",
+      dataIndex: "daoDien",
+      key: "daoDien",
     },
     {
-      title: 'Đạo diễn',
-      dataIndex: 'daoDien',
-      key: 'daoDien',
+      title: "Poster",
+      dataIndex: "Poster",
+      key: "Poster",
+      render: (_, record) => {
+        return record?.Poster ? <img src={record?.Poster} alt="Poster" style={{ width: 100 }} /> : null;
+      },
     },
     {
-      title: 'Diễn viên',
-      dataIndex: 'dienVien',
-      key: 'dienVien',
+      title: "Ngày khởi chiếu",
+      dataIndex: "NgayKC",
+      key: "NgayKC",
+      render: (_, record) => {
+        return record?.NgayKC ? (
+          <div>{moment(record?.NgayKC).format("DD-MM-YYYY")}</div>
+        ) : null;
+      },
     },
     {
-      title: 'Poster',
-      dataIndex: 'poster',
-      key: 'poster',
+      title: "Giá gốc",
+      dataIndex: "GiaGoc",
+      key: "GiaGoc",
+      render: (_, record) => {
+        return record.GiaGoc ? (
+          <div>{new Intl.NumberFormat().format(record.GiaGoc)}đ</div>
+        ) : null;
+      },
     },
     {
-      title: 'Ngày khởi chiếu',
-      dataIndex: 'ngayKhoiChieu',
-      key: 'ngayKhoiChieu',
-    },
-    {
-      title: 'Giới hạn độ tuổi',
-      dataIndex: 'gioiHanDoTuoi',
-      key: 'gioiHanDoTuoi',
-    },
-    {
-      title: 'Giá gốc',
-      dataIndex: 'giaGoc',
-      key: 'giaGoc',
-    },
-    {
-      title: 'Trailer',
-      dataIndex: 'trailer',
-      key: 'trailer',
-      render: (text) => <a href={text} target="_blank" rel="noopener noreferrer">Xem Trailer</a>,
-    },
-    {
-      title: 'Hành động',
-      key: 'action',
+      title: "Hành động",
+      key: "action",
       render: (_, record) => (
         <span>
           <Button
@@ -183,7 +202,7 @@ const CrudPhim = () => {
           />
           <Button
             icon={<DeleteOutlined />}
-            onClick={() => handleDelete(record?.MaP)}
+            onClick={() => handleDelete(record?.id)}
             danger
             className="hover:bg-red-600"
           />
@@ -193,130 +212,84 @@ const CrudPhim = () => {
   ];
 
   // Giao diện người dùng
+  if (!isAdmin) {
+    return <div>Bạn không có quyền truy cập trang này.</div>; // Hoặc điều hướng đến trang khác
+  }
+
   return (
     <div className="container mx-auto p-4">
       <Button
         type="primary"
         icon={<PlusOutlined />}
         onClick={() => showModal()}
-        className="mb-4 bg-green-600 hover:bg-green-700"
+        className="mb-4"
       >
         Thêm Phim
       </Button>
-      <Table 
-        columns={columns} 
-        dataSource={phimList} 
-        rowKey="id" 
+      <Table
+        columns={columns}
+        dataSource={phimList}
+        rowKey="id"
         className="rounded-lg overflow-hidden shadow-lg"
+        scroll={{ x: "auto" }}
       />
 
       <Modal
-        title={currentPhim ? 'Sửa Phim' : 'Thêm Phim'}
+        title={currentPhim ? "Sửa Phim" : "Thêm Phim"}
         visible={isModalVisible}
         onOk={handleOk}
         onCancel={handleCancel}
-        okText={currentPhim ? 'Cập nhật' : 'Thêm'}
+        okText={currentPhim ? "Cập nhật" : "Thêm"}
       >
         <Form form={form} layout="vertical">
           <Form.Item
             name="title"
             label="Tên Phim"
-            rules={[{ required: true, message: 'Vui lòng nhập tên phim!' }]}
+            rules={[{ required: true, message: "Vui lòng nhập tên phim!" }]}
           >
             <Input className="border border-gray-300 rounded-lg" />
           </Form.Item>
           <Form.Item
             name="nhan"
             label="Nhãn"
-            rules={[
-              { required: true, message: 'Vui lòng nhập nhãn!' },
-              {validator: (_, value) => {
-                if (value && !['P', 'K', 'T13', 'T16', 'T18', 'C'].includes(value?.toString())) {
-                  return Promise.reject("Nhãn phải thuộc 'P', 'K', 'T13', 'T16', 'T18', 'C'")
-                }
-                return Promise.resolve()
-              }}
-            ]}
+            rules={[{ required: true, message: "Vui lòng nhập nhãn!" }]}
           >
             <Input className="border border-gray-300 rounded-lg" />
           </Form.Item>
           <Form.Item
             name="thoiGian"
             label="Thời gian"
-            rules={[{ required: true, message: 'Vui lòng nhập thời gian phim!' }]}
+            rules={[{ required: true, message: "Vui lòng nhập thời gian phim!" }]}
           >
             <Input type="number" className="border border-gray-300 rounded-lg" />
           </Form.Item>
           <Form.Item
-            name="theLoai"
-            label="Thể loại"
-            rules={[{ required: true, message: 'Vui lòng nhập thể loại!' }]}
-          >
-            <Input className="border border-gray-300 rounded-lg" />
-          </Form.Item>
-          <Form.Item
             name="moTa"
             label="Mô tả"
-            rules={[{ required: true, message: 'Vui lòng nhập mô tả!' }]}
+            rules={[{ required: true, message: "Vui lòng nhập mô tả!" }]}
           >
             <Input.TextArea className="border border-gray-300 rounded-lg" />
           </Form.Item>
           <Form.Item
             name="daoDien"
             label="Đạo diễn"
-            rules={[{ required: true, message: 'Vui lòng nhập đạo diễn!' }]}
+            rules={[{ required: true, message: "Vui lòng nhập đạo diễn!" }]}
           >
             <Input className="border border-gray-300 rounded-lg" />
           </Form.Item>
           <Form.Item
-            name="dienVien"
-            label="Diễn viên"
-            rules={[{ required: true, message: 'Vui lòng nhập diễn viên!' }]}
-          >
-            <Input className="border border-gray-300 rounded-lg" />
-          </Form.Item>
-          <Form.Item
-            label="Poster"
-            name='poster'
-            rules={[{ required: true, message: 'Vui lòng nhập poster' }]}
-          >
-            <Input className="border border-gray-300 rounded-lg" />
-          </Form.Item>
-          <Form.Item
+            name="ngayKhoiChieu"
             label="Ngày khởi chiếu"
-            name='ngayKhoiChieu'
-            rules={[{ required: true, message: 'Vui lòng nhập giá trị' }]}
+            rules={[{ required: true, message: "Vui lòng chọn ngày khởi chiếu!" }]}
           >
             <DatePicker className="w-full border border-gray-300 rounded-lg" />
           </Form.Item>
           <Form.Item
-            label="Giới hạn độ tuổi"
-            name='gioiHanDoTuoi'
-            rules={[
-              {required: true, message: 'Vui lòng nhập giá trị'},
-              {validator: (_, value) => {
-                if (value && !['0', '13', '16', '18'].includes(value?.toString())) {
-                  return Promise.reject("Tuổi phải thuộc '0', '13', '16', '18'")
-                }
-                return Promise.resolve()
-              }}
-            ]}
-          >
-            <Input className="border border-gray-300 rounded-lg" />
-          </Form.Item>
-          <Form.Item
             label="Giá gốc"
-            name='giaGoc'
-            rules={[{ required: true, message: 'Vui lòng nhập giá gốc' }]}
+            name="giaGoc"
+            rules={[{ required: true, message: "Vui lòng nhập giá gốc" }]}
           >
             <InputNumber className="w-full border border-gray-300 rounded-lg" />
-          </Form.Item>
-          <Form.Item
-            name="trailer"
-            label="Trailer"
-            rules={[{ required: true, message: 'Vui lòng nhập link trailer!' }]}
-          >
-            <Input className="border border-gray-300 rounded-lg" />
           </Form.Item>
         </Form>
       </Modal>

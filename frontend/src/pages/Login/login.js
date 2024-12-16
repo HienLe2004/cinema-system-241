@@ -11,7 +11,7 @@ function Login() {
   const onFinish = (values) => {
     if (values.name === "admin" && values.password === "123456789") {
       loginAsAdmin(); // Đặt trạng thái admin
-      navigate("/home");
+      navigate("/ad-crud-movie");
     } else {
       alert("Thông tin đăng nhập không chính xác");
     }
