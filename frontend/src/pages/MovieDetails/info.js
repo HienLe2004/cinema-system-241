@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { getTheLoaiByPhimID } from '../../api/theloai.api';
+import { getTheLoaiByMaP } from '../../api/theloai.api';
 import { getDaoDienByPhimID } from '../../api/daodien.api';
 import { getDienVienByPhimID } from '../../api/dienvien.api';
 import { getPhimCoHTCByMaP } from '../../api/phim_co_htc';
 import { getSuatChieuByMaP } from '../../api/suatchieu.api';
 import { format, parse } from "date-fns";
+import CommentAndRate from '../../component/CommentAndRate';
+import CommentAndRateForm from '../../component/CommentAndRateForm';
+import { getDanhGiaByMaP } from '../../api/danhgia.api';
 
 const MovieDetail = () => {
   const location = useLocation();
@@ -15,8 +18,10 @@ const MovieDetail = () => {
   const [dienVien, setDienVien] = useState([]);
   const [loaiPhienDich, setLoaiPhienDich] = useState([]);
   const [congNgheChieu, setCongNgheChieu] = useState([]);
+  const [danhGia, setDanhGia] = useState([]);
   const [suatChieu, setSuatChieu] = useState([]);
   const [selectedShowtime, setSelectedShowtime] = useState(null);
+  const [showRatingForm, setShowRatingForm] = useState(false);
   const navigate = useNavigate();
 
   const handleShowtimeSelection = (showtime) => {
@@ -33,7 +38,7 @@ const MovieDetail = () => {
 
   useEffect(()=>{
     const fetchTheLoaiPhim = async () => {
-      const {data} = await getTheLoaiByPhimID(movie.MaP)
+      const {data} = await getTheLoaiByMaP(movie.MaP)
       setTheLoai(data.data[0].map(one => one.TenTheLoai))
     }
     const fetchDaoDienPhim = async () => {
@@ -72,6 +77,11 @@ const MovieDetail = () => {
       })
       setLoaiPhienDich(loaiPhienDichWithTenNgonNgu)
     }
+    const fetchDanhGiaPhim = async () => {
+      const {data} = await getDanhGiaByMaP(movie.MaP)
+      console.log(data.data[0])
+      setDanhGia(data.data[0])  
+    }
     const fetchSuatChieuPhim = async () => {
       const {data} = await getSuatChieuByMaP(movie.MaP)
       let formatedSuatChieu = data?.data?.reduce((list, suat) => {
@@ -85,6 +95,7 @@ const MovieDetail = () => {
     fetchDaoDienPhim()
     fetchDienVienPhim()
     fetchHinhThucChieuPhim()
+    fetchDanhGiaPhim()
     fetchSuatChieuPhim()
   },[])
 
@@ -111,7 +122,20 @@ const MovieDetail = () => {
           <p className="text-gray-900"><strong>Công nghệ chiếu:</strong> {congNgheChieu.join(", ")}</p>
         </div>
       </div>
-
+      <div className='bg-gray-200 rounded-lg shadow-lg mt-8 flex flex-col p-6 gap-y-2'>
+        <p className='flex justify-center text-2xl text-red-600 font-bold'>Đánh giá</p>
+        <div className='flex flex-col gap-y-2 text-gray-700'>
+          {danhGia.length === 0 && <p className='italic text-center'>Chưa có đánh giá nào</p>}
+          {danhGia.map((item, index) => {
+            return <CommentAndRate name={item.MaKH} comment={item.BinhLuan} rate={item.DiemSo} date={item.Ngay}/>
+          })}
+        </div>
+        {showRatingForm && <CommentAndRateForm closeForm={()=>setShowRatingForm(false)}/>}
+        <button className={`${showRatingForm ? "hidden":"flex"} justify-center items-center bg-green-600 py-2 font-semibold text-xl rounded-lg hover:bg-green-700 transition-all`}
+          onClick={()=>setShowRatingForm(true)}>
+          Viết đánh giá
+        </button>
+      </div>
       <div className="mt-8 bg-white rounded-lg shadow-lg p-6 bg-gray-200">
         <h3 className="text-2xl font-semibold text-red-600 mb-4"><strong>Chọn suất chiếu</strong></h3>
         {Object.keys(suatChieu)?.length > 0 ? (
