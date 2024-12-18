@@ -12,6 +12,7 @@ import Search from "./pages/Search/search";
 import Crud_Movie from "./pages/Crud/movie";
 import Crud_Show_Time from "./pages/Crud/showTime";
 import Navigation from "./pages/Navigation/navigation";
+import CustomerLogin from './pages/Login/customerLogin';
 function App() {
   return (
     <UserProvider>
@@ -20,6 +21,7 @@ function App() {
           <Route path="/" element={<Navigation />} />
           <Route path="/home" element={<Home />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/customer-login" element={<CustomerLogin />} />
           <Route path="/register" element={<Register />} />
           <Route path="/booking/:id" element={<Booking />} />
           <Route path="/movie/:id" element={<MovieDetails />} />

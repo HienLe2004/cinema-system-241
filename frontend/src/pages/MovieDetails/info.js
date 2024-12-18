@@ -8,7 +8,8 @@ import { getSuatChieuByMaP } from '../../api/suatchieu.api';
 import { format, parse } from "date-fns";
 import CommentAndRate from '../../component/CommentAndRate';
 import CommentAndRateForm from '../../component/CommentAndRateForm';
-import { getDanhGiaByMaP } from '../../api/danhgia.api';
+import { deleteDanhGiaByMaP, getDanhGiaByMaP } from '../../api/danhgia.api';
+import { FaStar } from 'react-icons/fa';
 
 const MovieDetail = () => {
   const location = useLocation();
@@ -22,6 +23,9 @@ const MovieDetail = () => {
   const [suatChieu, setSuatChieu] = useState([]);
   const [selectedShowtime, setSelectedShowtime] = useState(null);
   const [showRatingForm, setShowRatingForm] = useState(false);
+  const [customer, setCustomer] = useState(null);
+  const [myRating, setMyRating] = useState(null);
+  const [averageRating, setAverageRating] = useState(0);
   const navigate = useNavigate();
 
   const handleShowtimeSelection = (showtime) => {
@@ -35,6 +39,41 @@ const MovieDetail = () => {
       alert('Vui lòng chọn một suất chiếu!');
     }
   };
+
+  const handleDeleteRating = async () => {
+    if (!customer || !myRating) return
+    const {data} = await deleteDanhGiaByMaP(movie.MaP, customer.MaKH) 
+    setDanhGia(danhGia.filter((one) => one.MaKH !== customer.MaKH))
+    setMyRating(null)
+  }
+
+  const handleCloseRatingForm = (newRating) => {
+    setShowRatingForm(false)
+    if (newRating) {
+      const oldRating = danhGia.find((one) => one.MaKH === customer.MaKH)
+      if (!oldRating) {
+        setMyRating(newRating)
+        setDanhGia([...danhGia, newRating])
+      }
+      else {
+        setMyRating(newRating)
+        setDanhGia([...danhGia.filter((one) => one.MaKH !== customer.MaKH), newRating])
+      }
+    }
+  }
+  const calculateAverageRating = (arr) => {
+    if (!arr || arr.length===0) {
+      setAverageRating(5)
+      return
+    }
+    let total = 0
+    for (let rate of arr) {
+      total += rate.DiemSo
+    }
+    let avg = total/arr.length
+    console.log(avg)
+    setAverageRating(avg.toFixed(1))
+  } 
 
   useEffect(()=>{
     const fetchTheLoaiPhim = async () => {
@@ -68,7 +107,7 @@ const MovieDetail = () => {
 
       let loaiPhienDichWithTenNgonNgu = uniqueLoaiPhienDich.map(one => {
         const uniqueTenNgonNgu = data.data[0].reduce((unique, item) => {
-          if (!unique.includes(item.TenNgonNgu) && item.LoaiPhienDich == one) {
+          if (!unique.includes(item.TenNgonNgu) && item.LoaiPhienDich === one) {
             unique.push(item.TenNgonNgu);
           }
           return unique;
@@ -78,9 +117,19 @@ const MovieDetail = () => {
       setLoaiPhienDich(loaiPhienDichWithTenNgonNgu)
     }
     const fetchDanhGiaPhim = async () => {
+      const customer = JSON.parse(localStorage.getItem("customer")) || null
+      setCustomer(customer)
       const {data} = await getDanhGiaByMaP(movie.MaP)
-      console.log(data.data[0])
-      setDanhGia(data.data[0])  
+      const danhGia = data.data[0]
+      setDanhGia(danhGia)
+      calculateAverageRating(danhGia)
+      if (!danhGia || danhGia.length===0 || !customer) {
+        setMyRating(null)
+      }
+      else {
+        let my = danhGia.find((one) => {return one.MaKH === customer.MaKH})
+        setMyRating(my)
+      }  
     }
     const fetchSuatChieuPhim = async () => {
       const {data} = await getSuatChieuByMaP(movie.MaP)
@@ -98,7 +147,9 @@ const MovieDetail = () => {
     fetchDanhGiaPhim()
     fetchSuatChieuPhim()
   },[])
-
+  useEffect(()=>{
+    calculateAverageRating(danhGia)
+  },[danhGia])
   return (
     <div className="container mx-auto p-24 ">
       <div className="flex flex-col md:flex-row justify-center items-center bg-white rounded-lg shadow-lg p-6 space-y-6 md:space-y-0 md:space-x-8 border border-gray-100 bg-gray-200">
@@ -124,17 +175,37 @@ const MovieDetail = () => {
       </div>
       <div className='bg-gray-200 rounded-lg shadow-lg mt-8 flex flex-col p-6 gap-y-2'>
         <p className='flex justify-center text-2xl text-red-600 font-bold'>Đánh giá</p>
-        <div className='flex flex-col gap-y-2 text-gray-700'>
+        <div className='flex items-center justify-center gap-x-2'>
+          <p>{averageRating}</p>
+          <FaStar className='text-yellow-200'/>
+          <p className='italic'>{`(${danhGia.length} đánh giá)`}</p>
+        </div>
+        <div className='flex flex-col gap-y-2 text-gray-700 max-h-32 overflow-y-scroll'>
           {danhGia.length === 0 && <p className='italic text-center'>Chưa có đánh giá nào</p>}
           {danhGia.map((item, index) => {
-            return <CommentAndRate name={item.MaKH} comment={item.BinhLuan} rate={item.DiemSo} date={item.Ngay}/>
+            return <CommentAndRate 
+              key={index} 
+              name={item.Ten} 
+              comment={item.BinhLuan} 
+              rate={item.DiemSo} 
+              date={item.Ngay} 
+              isMine={customer.MaKH===item.MaKH}
+              updateRatingForm={()=>setShowRatingForm(true)}
+              deleteRating={handleDeleteRating}
+            />
           })}
         </div>
-        {showRatingForm && <CommentAndRateForm closeForm={()=>setShowRatingForm(false)}/>}
-        <button className={`${showRatingForm ? "hidden":"flex"} justify-center items-center bg-green-600 py-2 font-semibold text-xl rounded-lg hover:bg-green-700 transition-all`}
+        {showRatingForm && <CommentAndRateForm 
+          rate={myRating?.DiemSo} 
+          comment={myRating?.BinhLuan} 
+          closeForm={(newRating)=>{handleCloseRatingForm(newRating)}} 
+          myRating={myRating}
+          maP={movie.MaP}
+        />}
+        {customer && !myRating && <button className={`${(showRatingForm) ? "hidden":"flex"} justify-center items-center bg-green-600 py-2 font-semibold text-xl rounded-lg hover:bg-green-700 transition-all`}
           onClick={()=>setShowRatingForm(true)}>
           Viết đánh giá
-        </button>
+        </button>}
       </div>
       <div className="mt-8 bg-white rounded-lg shadow-lg p-6 bg-gray-200">
         <h3 className="text-2xl font-semibold text-red-600 mb-4"><strong>Chọn suất chiếu</strong></h3>

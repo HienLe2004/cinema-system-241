@@ -1,30 +1,48 @@
 import { FaStar } from "react-icons/fa";
-import RatingStars from "./RatingStars";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { createDanhGiaByMaP, updateDanhGiaByMaP } from "../api/danhgia.api";
+import { format } from "date-fns";
 
-export default function CommentAndRateForm({rate = 0, comment = "Hay de lai nhan xet cho phim", closeForm}) {
+export default function CommentAndRateForm({rate = 0, comment = "Hay de lai nhan xet cho phim", closeForm, myRating, maP}) {
     const [currentRating, setCurrentRating] = useState(rate);
     const [errorRating, setErrorRating] = useState(false);
     const [currentComment, setCurrentComment] = useState(comment);
     const [hover, setHover] = useState(null);
-    const handleSubmitForm = () => {
+    const [isUpdate, setIsUpdate] = useState();
+    const handleSubmitForm = async () => {
         setErrorRating(currentRating===0)
-        console.log(currentComment);
-        console.log(currentRating)
-        closeForm();
+        if (!maP) return;
+        if (isUpdate) {
+            const {data} = await updateDanhGiaByMaP(maP, {...myRating, BinhLuan: currentComment, DiemSo: currentRating})    
+            closeForm({...myRating, BinhLuan: currentComment, DiemSo: currentRating})
+        }
+        else {
+            const customer = JSON.parse(localStorage.getItem("customer"))
+            const {data} = await createDanhGiaByMaP(maP, 
+                {MaKH: customer.MaKH, BinhLuan: currentComment, DiemSo: currentRating, Ngay: format(new Date(), "yyyy-MM-dd")})
+            closeForm({Ten: customer.Ten, MaKH: customer.MaKH, BinhLuan: currentComment, DiemSo: currentRating, Ngay: format(new Date(), "yyyy-MM-dd")})
+        }
     }
     const handleCloseForm = () => {
         setCurrentComment(comment)
         setCurrentRating(rate)
         setErrorRating(false)
-        closeForm();
+        closeForm(null);
     }
+    useEffect(()=>{
+        if (myRating) {
+            setIsUpdate(true)
+        }
+        else{
+            setIsUpdate(false)
+        }
+    },[])
     return (
         <div className='bg-gray-500 px-10 py-2 rounded-lg flex flex-col justify-center items-center gap-y-2'>
             {errorRating && <p className="text-xs italic text-red-500">Vui lòng đánh giá bằng sao cho phim từ 1 đến 5 sao</p>}
             <div className='flex items-center gap-x-1'>
                 {[...Array(5)].map((item, index) => {
-                    return <label>
+                    return <label key={index}>
                         <input type="radio" onClick={()=>setCurrentRating(index+1)} className="hidden"></input>
                         <FaStar 
                             size={30} 
@@ -45,7 +63,7 @@ export default function CommentAndRateForm({rate = 0, comment = "Hay de lai nhan
             <div className="flex gap-x-10">
                 <button className={`justify-center items-center bg-green-600 p-2 font-semibold text-xl rounded-lg hover:bg-green-700 transition-all`}
                     onClick={handleSubmitForm}>
-                    Đăng
+                    {myRating ? "Cập nhật" : "Đăng"}
                 </button>
                 <button className={`justify-center items-center bg-red-500 p-2 font-semibold text-xl rounded-lg hover:bg-red-700 transition-all`}
                     onClick={handleCloseForm}>

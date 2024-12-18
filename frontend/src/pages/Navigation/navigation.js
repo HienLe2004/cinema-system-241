@@ -15,7 +15,7 @@ const Navigation = () => {
       <div className="flex flex-col items-center gap-4">
         <Button
           type="primary"
-          onClick={() => navigate('/home')}
+          onClick={() => navigate('/customer-login')}
           className="w-40 h-12 text-lg text-red-500 font-semibold bg-Lime-50 hove:b"
         >
           Khách hàng

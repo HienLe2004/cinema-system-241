@@ -162,6 +162,7 @@ const HomeMenu = () => {
   };
 
   const handleLogout = () => {
+    localStorage.clear();
     logout(); // Đặt trạng thái không phải admin
     navigate("/"); // Điều hướng về trang điều hướng sau khi đăng xuất
   };

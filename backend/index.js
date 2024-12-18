@@ -36,6 +36,7 @@ app.use('/api/v1', require("./routes/ghe.Routes"))
 app.use('/api/v1', require("./routes/ghedadatcuasc.Routes"))
 app.use('/api/v1', require("./routes/ve.Routes"))
 app.use('/api/v1', require("./routes/danhgia.Routes"))
+app.use('/api/v1', require("./routes/login.Routes"))
 
 
 

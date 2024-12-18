@@ -6,7 +6,7 @@ import { getAllPhim } from "../../api/phim.api";
 
 const MovieList = () => {
   const [movies, setMovies] = useState([]);
-  const [currentMovies, setCurrentMovies] = useState([]);
+  const [currentMovies, setCurrentMovies] = useState();
   const [currnentIndex, setCurrentIndex] = useState(-1);
   const [isPaused, setIsPaused] = useState(false);
 
@@ -71,9 +71,9 @@ const MovieList = () => {
 
         {/* Các tấm hình phim */}
         <div className="flex justify-center space-x-4 max-w-screen-xl mx-auto">
-          {currentMovies.map((movie) => (
+          {currentMovies?.map((movie, index) => (
             <div
-              key={movie?.MaP}
+              key={movie?.MaP || index}
               className="relative group overflow-hidden rounded-lg shadow-lg bg-white"
               onMouseEnter={() => setIsPaused(true)} // Dừng tua khi di chuột vào
               onMouseLeave={() => setIsPaused(false)} // Tiếp tục tua khi rời chuột
