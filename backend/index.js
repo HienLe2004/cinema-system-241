@@ -37,6 +37,11 @@ app.use('/api/v1', require("./routes/ghedadatcuasc.Routes"))
 app.use('/api/v1', require("./routes/ve.Routes"))
 app.use('/api/v1', require("./routes/danhgia.Routes"))
 app.use('/api/v1', require("./routes/login.Routes"))
+app.use('/api/v1', require("./routes/vecodomuakem.Routes"))
+app.use('/api/v1', require("./routes/domuakem.Routes"))
+app.use('/api/v1', require("./routes/qualuuniem.Routes"))
+app.use('/api/v1', require("./routes/bap.Routes"))
+app.use('/api/v1', require("./routes/nuoc.Routes"))
 
 
 
