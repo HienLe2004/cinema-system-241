@@ -9,12 +9,10 @@ function CustomerLogin() {
 
   const onFinish = async (values) => {
     const {data} = await getTaiKhoan({username: values.name, password: values.password})
-    console.log(data)
     if (!data.success) {
       alert("Thông tin đăng nhập không chính xác");
     }
     else {
-      console.log(data.data[0])
       localStorage.setItem("customer", JSON.stringify(data.data[0]))
       navigate("/home")
     }
@@ -65,9 +63,12 @@ function CustomerLogin() {
             />
           </div>
         </Form>
-        <div className="text-center mt-4">
+        <div className="text-center mt-4 flex flex-col gap-y-2">
           <Link to="/" className="text-blue-500 hover:underline text-sm">
             Back to Navigation page
+          </Link>
+          <Link to="/home" className="text-blue-500 hover:underline text-sm">
+            Continue without login
           </Link>
         </div>
       </div>

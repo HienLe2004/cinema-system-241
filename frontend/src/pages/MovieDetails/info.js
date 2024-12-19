@@ -71,7 +71,6 @@ const MovieDetail = () => {
       total += rate.DiemSo
     }
     let avg = total/arr.length
-    console.log(avg)
     setAverageRating(avg.toFixed(1))
   } 
 
@@ -189,7 +188,7 @@ const MovieDetail = () => {
               comment={item.BinhLuan} 
               rate={item.DiemSo} 
               date={item.Ngay} 
-              isMine={customer.MaKH===item.MaKH}
+              isMine={customer?.MaKH===item.MaKH}
               updateRatingForm={()=>setShowRatingForm(true)}
               deleteRating={handleDeleteRating}
             />
