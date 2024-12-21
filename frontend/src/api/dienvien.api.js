@@ -10,8 +10,8 @@ export async function getDienVienByPhimID(id) {
 export async function createDienVien(body) {
     return await axios.post(API_URL, body)
 }
-export async function updateDienVienByPhimID(body) {
-    return await axios.patch(API_URL, body)
+export async function updateDienVienByPhimID(id, body) {
+    return await axios.patch(API_URL+`/${id}`, body)
 }
 export async function deleteDienVienByPhimID(id, body) {
     return await axios.delete(API_URL+`/${id}`, body)

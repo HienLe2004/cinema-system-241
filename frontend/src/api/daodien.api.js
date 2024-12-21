@@ -10,8 +10,8 @@ export async function getDaoDienByPhimID(id) {
 export async function createDaoDien(body) {
     return await axios.post(API_URL, body)
 }
-export async function updateDaoDienByPhimID(body) {
-    return await axios.patch(API_URL, body)
+export async function updateDaoDienByPhimID(id, body) {
+    return await axios.patch(API_URL+`/${id}`, body)
 }
 export async function deleteDaoDienByPhimID(id, body) {
     return await axios.delete(API_URL+`/${id}`, body)
