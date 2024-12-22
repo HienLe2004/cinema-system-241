@@ -19,7 +19,7 @@ const Selection = () => {
 
   // Xử lý khi nhấn chọn ghế
   const handleSeatClick = (seat) => {
-    if (gheDaDat.some(one => seat == one.MaG)) return; // Không chọn được ghế đã đặt
+    if (gheDaDat?.some(one => seat == one.MaG)) return; // Không chọn được ghế đã đặt
     setSelectedSeats(
       (prevSelectedSeats) =>
         prevSelectedSeats.includes(seat)
