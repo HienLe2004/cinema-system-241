@@ -30,7 +30,7 @@ const Selection = () => {
 
   // Lấy lớp CSS của từng ghế
   const getSeatClass = (item) => {
-    if (gheDaDat.some(one => item.MaG === one.MaG)) return "bg-red-500 cursor-not-allowed"; // Ghế đã đặt
+    if (gheDaDat?.some(one => item.MaG === one.MaG)) return "bg-red-500 cursor-not-allowed"; // Ghế đã đặt
     if (selectedSeats.includes(item.MaG)) return "bg-blue-500"; // Ghế đang chọn
     if (item.LoaiGhe == "VIP") 
       return "bg-yellow-400 hover:bg-blue-300"; // Ghế VIP
@@ -55,7 +55,6 @@ const Selection = () => {
   useEffect(()=>{
     const fetchGhe = async () => {
       const {data} = await getGheByMaPCAndMaCN(suatChieu.MaPC, suatChieu.MaCN)
-      console.log(data.data)
       setGhe(data.data)
       data.data.map(one => {
         setMaxX(Math.max(one.ToaDoX, maxX))
