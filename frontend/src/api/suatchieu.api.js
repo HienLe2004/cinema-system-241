@@ -13,3 +13,12 @@ export async function getSuatChieuByMaP(id) {
         return {data:{}}
     }
 }
+export async function createSuatChieu(body) {
+    return await axios.post(API_URL, body)
+}
+export async function updateSuatChieu(body) {
+    return await axios.patch(API_URL, body)
+}
+export async function deleteSuatChieu(id, body) {
+    return await axios.delete(API_URL+`/${id}`, body)
+}

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Button, Modal, Form, Input, notification, DatePicker, InputNumber, Select } from 'antd';
-import { getAllSuatChieu, getSuatChieuByMaP } from '../../api/suatchieu.api';
+import { getAllSuatChieu, getSuatChieuByMaP, createSuatChieu, updateSuatChieu, deleteSuatChieu } from '../../api/suatchieu.api';
 import { getAllPhim } from '../../api/phim.api';
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 
@@ -76,9 +76,22 @@ const CrudShowTime = () => {
       if (currentSuatChieu) {
         // Cập nhật suất chiếu
         // API update (Giả sử API update được cung cấp sẵn)
+        await updatePhimByID(currentPhim.id, formData);
+                
       } else {
         // Thêm mới suất chiếu
         // API create (Giả sử API create được cung cấp sẵn)
+          const createData = {
+                    MaSuatChieu: values?.MaSC,
+                    PhongChieu: values?.MaPC,
+                    MaChiNhanh: values?.MaCN,
+                    Ngay: values?.Ngay,
+                    Gio: values?.Gio,
+                    Thu: values?.Thu,
+                    MaPhim: values?.MaP,
+                    MaHinhThucChieu: values?.MaHTC,
+                  };
+                  await createSuatChieu(createData);
       }
       
       notification.success({
@@ -102,6 +115,7 @@ const CrudShowTime = () => {
 
     try {
       // API delete (Giả sử API delete được cung cấp sẵn)
+      await deleteSuatChieu(id);
       notification.success({ message: 'Thành công', description: 'Xóa suất chiếu thành công!' });
       fetchSuatChieuList(); // Tải lại danh sách suất chiếu
     } catch (error) {
@@ -113,24 +127,49 @@ const CrudShowTime = () => {
   // Cấu hình các cột cho bảng suất chiếu
   const columns = [
     {
-      title: 'Tên Phim',
-      dataIndex: 'phimName',
-      key: 'phimName',
+      title: 'Mã Suất Chiếu',
+      dataIndex: 'MaSC',
+      key: 'MaSC',
     },
     {
-      title: 'Phòng',
-      dataIndex: 'phong',
-      key: 'phong',
+      title: 'Mã Phòng Chiếu',
+      dataIndex: 'MaPC',
+      key: 'MaPC',
     },
     {
-      title: 'Khung Giờ',
-      dataIndex: 'thoiGian',
-      key: 'thoiGian',
+      title: 'Mã Chi Nhánh',
+      dataIndex: 'MaCN',
+      key: 'MaCN',
     },
     {
-      title: 'Chi Nhánh',
-      dataIndex: 'chiNhanh',
-      key: 'chiNhanh',
+      title: 'Ngày chiếu',
+      dataIndex: 'Ngay',
+      key: 'Ngay',
+      render: (_, record) => {
+              return record?.NgayKC ? (
+                <div>{moment(record?.NgayKC).format("DD-MM-YYYY")}</div>
+              ) : null;
+            },
+    },
+    {
+      title: 'Giờ chiếu',
+      dataIndex: 'Gio',
+      key: 'Gio',
+    },
+    {
+      title: 'Thứ chiếu',
+      dataIndex: 'Thu',
+      key: 'Thu',
+    },
+    {
+      title: 'Mã Phim',
+      dataIndex: 'MaP',
+      key: 'MaP',
+    },
+    {
+      title: 'Mã Hình Thức Chiếu',
+      dataIndex: 'MaHTC',
+      key: 'MaHTC',
     },
     {
       title: 'Hành động',
