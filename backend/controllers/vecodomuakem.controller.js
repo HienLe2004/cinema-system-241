@@ -3,19 +3,19 @@ const db = require("../config/db");
 // Create VE_CO_DO_MUA_KEM
 const createVeCoDoMuaKem = async (req, res) => {
     try {
-        const { maV, maSP, soLuong } = req.body;
+        const { MaV, MaSP, SoLuong } = req.body;
 
         // Kiểm tra dữ liệu đầu vào
-        if (!maV || !maSP || !soLuong) {
+        if (!MaV || !MaSP || !SoLuong) {
             return res.status(400).send({
                 success: false,
-                message: "Missing or invalid input data. Required: maV, maSP, soLuong.",
+                message: "Missing or invalid input data. Required: MaV, MaSP, SoLuong.",
             });
         }
 
         // Gọi procedure CreateVeCoDoMuaKem
         const query = 'CALL CreateVeCoDoMuaKem(?, ?, ?)';
-        await db.query(query, [maV, maSP, soLuong]);
+        await db.query(query, [MaV, MaSP, SoLuong]);
 
         // Trả về phản hồi thành công
         res.status(201).send({
@@ -45,10 +45,10 @@ const createVeCoDoMuaKem = async (req, res) => {
 // Get VE_CO_DO_MUA_KEM by MaV
 const getVeCoDoMuaKemByMaV = async (req, res) => {
     try {
-        const maV = req.params.maV;
+        const MaV = req.params.MaV;
 
         // Kiểm tra dữ liệu đầu vào
-        if (!maV) {
+        if (!MaV) {
             return res.status(400).send({
                 success: false,
                 message: "Missing or invalid MaV",
@@ -57,7 +57,7 @@ const getVeCoDoMuaKemByMaV = async (req, res) => {
 
         // Gọi procedure GetVeCoDoMuaKemByMaV
         const query = 'CALL GetVeCoDoMuaKemByMaV(?)';
-        const [rows] = await db.query(query, [maV]);
+        const [rows] = await db.query(query, [MaV]);
 
         if (!rows || rows.length === 0) {
             return res.status(404).send({

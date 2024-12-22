@@ -3,6 +3,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { getGheByMaPCAndMaCN } from "../../api/ghe.api";
 import { getGheDaDatByMaPCAndMaCN } from "../../api/getdadatcuasc";
+import { getDoMuaKem } from "../../api/domuakem.api";
 
 const Selection = () => {
   const { id } = useParams(); // Lấy ID từ URL
@@ -13,7 +14,8 @@ const Selection = () => {
   const [ghe, setGhe] = useState([]);
   const [gheDaDat, setGheDaDat] = useState([]);
   const [selectedSeats, setSelectedSeats] = useState([]); // Ghế đã chọn
-
+  const [doMuaKem, setDoMuaKem] = useState([]);
+  const [doMuaKemDaChon, setDoMuaKemDaChon] = useState([]);
   const seatRefs = useRef({});
   const navigate = useNavigate();
 
@@ -48,10 +50,31 @@ const Selection = () => {
     navigate(`/ticket/${id}`, {
       state: {
         cacGheDaChon: (selectedSeats.map(one => {return ghe.find(item => item.MaG === one)})),
+        cacDoMuaKemDaChon: doMuaKemDaChon,
         suatChieu: suatChieu
       },
     });
   };
+  const handleIncrement = (MaSP) => {
+    const newDoMuaKem = doMuaKem.map(item => {
+      if (item?.MaSP == MaSP) {
+        return {...item, SoLuong: item.SoLuong + 1}
+      }
+      else return item
+    })
+    setDoMuaKem(newDoMuaKem)
+    setDoMuaKemDaChon(newDoMuaKem.filter(item => item.SoLuong != 0))
+  }
+  const handleDecrement = (MaSP) => {
+    const newDoMuaKem = doMuaKem.map(item => {
+      if (item?.MaSP == MaSP && item?.SoLuong > 0) {
+        return {...item, SoLuong: item.SoLuong - 1}
+      }
+      else return item
+    })
+    setDoMuaKem(newDoMuaKem)
+    setDoMuaKemDaChon(newDoMuaKem.filter(item => item.SoLuong != 0))
+  }
   useEffect(()=>{
     const fetchGhe = async () => {
       const {data} = await getGheByMaPCAndMaCN(suatChieu.MaPC, suatChieu.MaCN)
@@ -65,8 +88,20 @@ const Selection = () => {
       const {data} = await getGheDaDatByMaPCAndMaCN(suatChieu.MaSC, suatChieu.MaPC, suatChieu.MaCN)
       setGheDaDat(data.data)
     }
+    const fetchDoMuaKem = async () => {
+      const {data} = await getDoMuaKem();
+      const amountData = data.data[0].map(one => {return {
+        MaSP: one.MaSP, 
+        Loai: one.Loai, 
+        NgaySanXuat: format(new Date(one.NgaySanXuat), "dd/MM/yyyy"),
+        Gia: one.Gia,
+        SoLuong: 0
+      }})
+      setDoMuaKem(amountData);
+    }
     fetchGhe()
     fetchGheDaDat()
+    fetchDoMuaKem()
   },[])
   return (
     <div className="p-12">
@@ -162,6 +197,29 @@ const Selection = () => {
         >
           Đặt vé
         </button>
+      </div>
+
+      <div className="mt-4 text-center">
+        <h2 className="text-xl font-semibold">Đồ mua kèm đã chọn:</h2>
+        <p className="text-lg">
+          {doMuaKemDaChon.length > 0
+            ? doMuaKemDaChon.map(item => {return `${item.SoLuong}-${item.Loai}`}).join(", ")
+            : "Chưa chọn đồ mua kèm nào."}
+        </p>
+      </div>
+      <div className="grid justify-center bg-white gap-4 p-5 rounded-xl mt-4" style={{gridTemplateColumns:"repeat(auto-fit, minmax(200px, 1fr))"}}>
+        {doMuaKem?.map((item, index) => {return (
+          <div className="bg-gray-200 flex flex-col shadow-lg p-6 rounded-xl w-full gap-y-2" key={index}>
+            <p className="text-red-600 text-xl font-bold">{item?.Loai}</p>
+            <p>Giá: {item?.Gia}</p>
+            <div className="flex flex-row gap-x-3 bg-gray-100 w-fit justify-center rounded-xl">
+              <button onClick={() => handleDecrement(item?.MaSP)} className="bg-gray-300 w-10">-</button>
+              <p>{item?.SoLuong}</p>
+              <button onClick={() => handleIncrement(item?.MaSP)} className="bg-gray-300 w-10">+</button>
+            </div>
+          </div>
+        )})}
+        
       </div>
     </div>
   );

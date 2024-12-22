@@ -5,22 +5,25 @@ import { getPhimByID } from "../../api/phim.api";
 import { createVe } from "../../api/ve.api";
 import HomeMenu from "../Home/HomeMenu";
 import Footer from "../Home/Footer";
+import { createVeCoDoMuaKem } from "../../api/vecodomuakem";
 const Ticket = () => {
   <HomeMenu />
   const { id } = useParams(); // Lấy ID từ URL
   const location = useLocation();
-  const { cacGheDaChon, suatChieu } = location.state || {};
+  const { cacGheDaChon, suatChieu, cacDoMuaKemDaChon } = location.state || {};
   const [tongTien, setTongTien] = useState(0)
   
   useEffect(()=>{
     const fetchPhim = async () => {
       let count = 0;
       for (let ghe of cacGheDaChon) {
-        console.log(ghe)
         count += ghe.GiaGhe
       }
       const {data} = await getPhimByID(suatChieu.MaP)
       count += data.data[0][0].GiaGoc
+      for (let doMuaKem of cacDoMuaKemDaChon) {
+        count += doMuaKem.Gia * doMuaKem.SoLuong
+      }
       setTongTien(count)
     }
     fetchPhim()
@@ -43,6 +46,14 @@ const Ticket = () => {
       MaNV: null,
       DanhSachGhe: danhSachGhe
     })
+    for (let doMuaKem of cacDoMuaKemDaChon) {
+      const {res} = await createVeCoDoMuaKem({
+        MaV: data.id,
+        MaSP: doMuaKem.MaSP,
+        SoLuong: doMuaKem.SoLuong
+      })
+      console.log(res)
+    }
     alert("Mã vé của bạn là: " + data.id)
 
     // Có thể thêm logic khác khi đặt vé hoàn tất, như điều hướng về trang chính
@@ -59,6 +70,10 @@ const Ticket = () => {
             <p><strong>Rạp:</strong> {suatChieu.PhongChieu || "Không có thông tin"}</p>
             <p><strong>Giờ chiếu:</strong> {`${format(parse(suatChieu.Gio, "kk:mm:ss", new Date()), "kk:mm")} - ${suatChieu.Thu} ${format(new Date(suatChieu.Ngay), "dd-MM-yyyy")}` || "Không có thông tin"}</p>
             <p><strong>ID suất chiếu:</strong> {suatChieu.MaSC}</p>
+            <p><strong>Đồ ăn kèm đã chọn: {cacDoMuaKemDaChon.length > 0
+            ? cacDoMuaKemDaChon.map(item => {return `${item.SoLuong}-${item.Loai}`}).join(", ")
+            : "Chưa chọn đồ mua kèm nào."}
+            </strong></p>
             <p><strong>Tổng tiền: </strong> {tongTien}</p>
           </>
         ) : (
