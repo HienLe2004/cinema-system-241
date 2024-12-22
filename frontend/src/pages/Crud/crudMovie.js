@@ -42,6 +42,7 @@ const CrudPhim = () => {
   const [form] = Form.useForm();
   const [posterFile, setPosterFile] = useState([]);
   const [dienVienList, setDienVienList] = useState([{ name: "", role: "" }]);
+  const [newDienVien, setNewDienVien] = useState(0);
   const [modalAction, setModalAction] = useState("");
 
   const fetchPhimList = async () => {
@@ -50,20 +51,6 @@ const CrudPhim = () => {
       const phimData = Array.isArray(phimResponse?.data?.data?.[0])
         ? phimResponse.data.data[0]
         : [];
-
-      // const enrichedPhimData = await Promise.all(phimData.map(async phim => {
-      //   const daoDienResponse = await getDaoDienByPhimID(phim.MaP);
-      //   const dienVienResponse = await getDienVienByPhimID(phim.MaP);
-
-      //   const daoDien = daoDienResponse?.data?.data?.[0];
-      //   const dienVienList = dienVienResponse?.data?.data || [];
-
-      //   return {
-      //     ...phim,
-      //     daoDien: daoDien ? daoDien.Ten : 'Chưa có thông tin',
-      //     dienVien: dienVienList.length > 0 ? dienVienList.map(dv => `${dv.Ten} (${dv.VaiDien})`).join(', ') : 'Chưa có thông tin',
-      //   };
-      // }));
 
       setPhimList(phimData);
     } catch (error) {
@@ -80,6 +67,7 @@ const CrudPhim = () => {
     form.resetFields();
     setPosterFile([]);
     setDienVienList([{ name: "", role: "" }]);
+    setNewDienVien(0);
     if (phim) {
       form.setFieldsValue({
         title: phim?.Ten || "",
@@ -141,13 +129,16 @@ const CrudPhim = () => {
           await updateDaoDienByPhimID(currentPhim.MaP, daoDienData);
         }
         await Promise.all(
-          dienVienList.map((dv) => {
+          dienVienList.map((dv, index) => {
             const dienVienData = {
               id: dv.id,
               Ten: dv.name,
               VaiDien: dv.role,
             };
-            return updateDienVienByPhimID(currentPhim.MaP, dienVienData);
+            if (index >= dienVienList.length - newDienVien)
+              return createDienVien({...dienVienData, MaP: currentPhim.MaP});
+            else 
+              return updateDienVienByPhimID(currentPhim.MaP, dienVienData);
           })
         );
 
@@ -232,6 +223,7 @@ const CrudPhim = () => {
   };
   const handleAddDienVien = () => {
     setDienVienList([...dienVienList, { name: "", role: "" }]);
+    setNewDienVien(newDienVien + 1);
   };
 
   const handleDienVienChange = (index, field, value) => {
